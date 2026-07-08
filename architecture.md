@@ -105,3 +105,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Desarrollo del servicio y controlador de autenticación JWT en backend (`/api/auth/login` y `/api/auth/me`).
   * Integración en frontend (`PetClinic.Web`) del `AuthContext`, guardianes de rutas React Router (`ProtectedRoute`), y el menú superior adaptativo `RibbonMenu` condicional según roles de sesión.
   * Diseño e implementación de la pantalla de inicio de sesión (`Login.tsx`) con estética "Clinical Precision" y selector rápido de cuentas de desarrollo.
+
+* **Sprint 3: Gestión de Personal y Clientes (Completado)**
+  * Definición de las entidades `Propietario` y `Veterinario` en `PetClinic.Domain` y sus mapeos en el DbContext de `PetClinic.Infrastructure`.
+  * Implementación de los casos de uso CQRS con MediatR y FluentValidation para el CRUD completo, incluyendo bajas lógicas de perfiles y paginación en el servidor con filtros de búsqueda.
+  * Automatización de la creación de usuarios de acceso en ASP.NET Core Identity con asignación de roles simultáneamente al registrar un perfil de Veterinario.
+  * Exposición de endpoints seguros `/api/propietarios` y `/api/veterinarios` en `PetClinic.Api` protegidos por rol.
+  * Creación de interfaces web en React para la gestión de propietarios (tabla interactiva con paginación, filtros de búsqueda, modal de creación y edición) y veterinarios (diseño por tarjetas y registro).

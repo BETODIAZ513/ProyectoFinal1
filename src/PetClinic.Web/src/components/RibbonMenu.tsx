@@ -38,6 +38,10 @@ export const RibbonMenu: React.FC = () => {
           {/* Menú de Administrador */}
           {hasRole("Administrador") && (
             <>
+              <Link to="/veterinarios" className={`ribbon-item ${isActive("/veterinarios") ? "active" : ""}`}>
+                <Users className="nav-icon" />
+                <span>Veterinarios</span>
+              </Link>
               <Link to="/propietarios" className={`ribbon-item ${isActive("/propietarios") ? "active" : ""}`}>
                 <Users className="nav-icon" />
                 <span>Propietarios</span>

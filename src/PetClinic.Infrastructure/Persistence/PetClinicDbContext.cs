@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PetClinic.Application.Common.Interfaces;
+using PetClinic.Domain.Entities;
 using PetClinic.Infrastructure.Identity;
 using System;
 using System.Threading;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PetClinic.Infrastructure.Persistence;
 
-public class PetClinicDbContext : IdentityDbContext<ApplicationUser>
+public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinicDbContext
 {
     private readonly ICurrentUserService _currentUserService;
 
@@ -19,9 +20,35 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>
         _currentUserService = currentUserService;
     }
 
+    public DbSet<Propietario> Propietarios => Set<Propietario>();
+    public DbSet<Veterinario> Veterinarios => Set<Veterinario>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Configuración de Propietario
+        modelBuilder.Entity<Propietario>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NombreCompleto).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Telefono).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CorreoElectronico).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Direccion).HasMaxLength(200);
+            entity.HasIndex(e => e.CorreoElectronico).IsUnique();
+        });
+
+        // Configuración de Veterinario
+        modelBuilder.Entity<Veterinario>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NombreCompleto).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Especialidad).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.NumeroColegiatura).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.Telefono).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CorreoElectronico).HasMaxLength(100).IsRequired();
+            entity.HasIndex(e => e.CorreoElectronico).IsUnique();
+        });
 
         // Configuración dinámica de Shadow Properties de auditoría
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

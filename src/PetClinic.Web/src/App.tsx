@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
+import { Owners } from "./pages/Owners";
+import { Veterinarians } from "./pages/Veterinarians";
 import { Placeholder } from "./pages/Placeholder";
 import { RibbonMenu } from "./components/RibbonMenu";
 import "./App.css";
@@ -46,7 +48,8 @@ function App() {
             <Route path="/inicio" element={<Home />} />
 
             {/* Acceso restringido para Administrador */}
-            <Route path="/propietarios" element={<Placeholder title="Gestión de Propietarios" />} />
+            <Route path="/veterinarios" element={<Veterinarians />} />
+            <Route path="/propietarios" element={<Owners />} />
             <Route path="/mascotas" element={<Placeholder title="Fichas de Mascotas" />} />
             <Route path="/citas" element={<Placeholder title="Agenda de Citas" />} />
             <Route path="/historial" element={<Placeholder title="Historial Global de Citas" />} />

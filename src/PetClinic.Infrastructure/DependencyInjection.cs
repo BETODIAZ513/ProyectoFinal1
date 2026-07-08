@@ -38,6 +38,8 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         // Inyección de servicios
+        services.AddScoped<IPetClinicDbContext>(provider => provider.GetRequiredService<PetClinicDbContext>());
+        services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services;
