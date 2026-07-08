@@ -119,3 +119,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Implementación de los casos de uso (Commands/Queries con MediatR) para el CRUD de Mascotas y el registro histórico del peso, validados con FluentValidation (validando peso > 0 kg).
   * Exposición de endpoints REST correspondientes en `/api/mascotas` y `/api/mascotas/{id}/pesos` en `PetClinic.Api`.
   * Desarrollo en el cliente React del visor de listado y de la Ficha Clínica Detallada interactiva con el registro histórico de pesos.
+
+* **Sprint 5: Citas y Atención Clínica (Completado)**
+  * Definición de la entidad `Cita` en `PetClinic.Domain` y sus configuraciones de claves foráneas con comportamiento de restricción de eliminación.
+  * Implementación de comandos y consultas MediatR para agendamiento, transiciones de estado de cita (Agendada -> En Espera -> Completada/Cancelada) y consultas filtradas por el veterinario logueado.
+  * Diseño del validador de superposición de agendas horarias para doctores en bloques de tiempo de 30 minutos.
+  * Exposición de endpoints específicos en `/api/citas` dentro de `PetClinic.Api` con autorizaciones selectivas de rol.
+  * Creación en el frontend de las pantallas de `Appointments` (calendario y programador del administrador), `Reception` (sala de espera y registro de arribos de recepcionistas), y `Consultations` (agenda clínica del veterinario con registro de pesos y cierre de consulta).

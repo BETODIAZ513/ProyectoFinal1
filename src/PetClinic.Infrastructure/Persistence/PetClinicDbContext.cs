@@ -24,6 +24,7 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
     public DbSet<Veterinario> Veterinarios => Set<Veterinario>();
     public DbSet<Mascota> Mascotas => Set<Mascota>();
     public DbSet<RegistroPeso> Pesos => Set<RegistroPeso>();
+    public DbSet<Cita> Citas => Set<Cita>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,6 +82,27 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
                 .WithMany()
                 .HasForeignKey(e => e.MascotaId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configuración de Cita
+        modelBuilder.Entity<Cita>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FechaHora).IsRequired();
+            entity.Property(e => e.Motivo).HasMaxLength(250).IsRequired();
+            entity.Property(e => e.Estado).HasMaxLength(20).IsRequired();
+            
+            // Relación Cita -> Mascota (1:N)
+            entity.HasOne<Mascota>()
+                .WithMany()
+                .HasForeignKey(e => e.MascotaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Cita -> Veterinario (1:N)
+            entity.HasOne<Veterinario>()
+                .WithMany()
+                .HasForeignKey(e => e.VeterinarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración dinámica de Shadow Properties de auditoría
