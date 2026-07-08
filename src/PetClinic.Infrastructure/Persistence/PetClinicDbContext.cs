@@ -22,6 +22,8 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
 
     public DbSet<Propietario> Propietarios => Set<Propietario>();
     public DbSet<Veterinario> Veterinarios => Set<Veterinario>();
+    public DbSet<Mascota> Mascotas => Set<Mascota>();
+    public DbSet<RegistroPeso> Pesos => Set<RegistroPeso>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +50,37 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
             entity.Property(e => e.Telefono).HasMaxLength(20).IsRequired();
             entity.Property(e => e.CorreoElectronico).HasMaxLength(100).IsRequired();
             entity.HasIndex(e => e.CorreoElectronico).IsUnique();
+        });
+
+        // Configuración de Mascota
+        modelBuilder.Entity<Mascota>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nombre).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Especie).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Raza).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Sexo).HasMaxLength(15).IsRequired();
+            entity.Property(e => e.Color).HasMaxLength(50);
+            
+            // Relación Mascota -> Propietario (1:N)
+            entity.HasOne<Propietario>()
+                .WithMany()
+                .HasForeignKey(e => e.PropietarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuración de RegistroPeso
+        modelBuilder.Entity<RegistroPeso>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.PesoKg).IsRequired();
+            entity.Property(e => e.FechaRegistro).IsRequired();
+
+            // Relación RegistroPeso -> Mascota (1:N)
+            entity.HasOne<Mascota>()
+                .WithMany()
+                .HasForeignKey(e => e.MascotaId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Configuración dinámica de Shadow Properties de auditoría

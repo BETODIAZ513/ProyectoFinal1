@@ -112,3 +112,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Automatización de la creación de usuarios de acceso en ASP.NET Core Identity con asignación de roles simultáneamente al registrar un perfil de Veterinario.
   * Exposición de endpoints seguros `/api/propietarios` y `/api/veterinarios` en `PetClinic.Api` protegidos por rol.
   * Creación de interfaces web en React para la gestión de propietarios (tabla interactiva con paginación, filtros de búsqueda, modal de creación y edición) y veterinarios (diseño por tarjetas y registro).
+
+* **Sprint 4: Pacientes y Mascotas (Completado)**
+  * Definición de las entidades `Mascota` (relacionada con Propietario) y `RegistroPeso` (relacionada con Mascota) en `PetClinic.Domain` y sus mapeos ORM en `PetClinic.Infrastructure`.
+  * Configuración de la exclusión del historial de pesaje de la inyección de shadow properties de auditoría pasiva en `PetClinicDbContext` cumpliendo con la regla de seguridad `REQ-SEG-03`.
+  * Implementación de los casos de uso (Commands/Queries con MediatR) para el CRUD de Mascotas y el registro histórico del peso, validados con FluentValidation (validando peso > 0 kg).
+  * Exposición de endpoints REST correspondientes en `/api/mascotas` y `/api/mascotas/{id}/pesos` en `PetClinic.Api`.
+  * Desarrollo en el cliente React del visor de listado y de la Ficha Clínica Detallada interactiva con el registro histórico de pesos.

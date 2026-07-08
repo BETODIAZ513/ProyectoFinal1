@@ -4,6 +4,7 @@ import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { Owners } from "./pages/Owners";
 import { Veterinarians } from "./pages/Veterinarians";
+import { Pets } from "./pages/Pets";
 import { Placeholder } from "./pages/Placeholder";
 import { RibbonMenu } from "./components/RibbonMenu";
 import "./App.css";
@@ -50,7 +51,7 @@ function App() {
             {/* Acceso restringido para Administrador */}
             <Route path="/veterinarios" element={<Veterinarians />} />
             <Route path="/propietarios" element={<Owners />} />
-            <Route path="/mascotas" element={<Placeholder title="Fichas de Mascotas" />} />
+            <Route path="/mascotas" element={<Pets />} />
             <Route path="/citas" element={<Placeholder title="Agenda de Citas" />} />
             <Route path="/historial" element={<Placeholder title="Historial Global de Citas" />} />
 

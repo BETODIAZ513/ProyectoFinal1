@@ -9,5 +9,7 @@ public interface IPetClinicDbContext
 {
     DbSet<Propietario> Propietarios { get; }
     DbSet<Veterinario> Veterinarios { get; }
+    DbSet<Mascota> Mascotas { get; }
+    DbSet<RegistroPeso> Pesos { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
