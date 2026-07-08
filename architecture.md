@@ -98,3 +98,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Estructuración de solución base y 5 proyectos de backend/pruebas.
   * Inicialización de la SPA React con Vite y dependencias NPM.
   * Habilitación inicial de CORS en `PetClinic.Api` permitiendo peticiones desde `http://localhost:5173`.
+
+* **Sprint 2: Seguridad, Autenticación, RBAC y Auditoría (Completado)**
+  * Integración de **ASP.NET Core Identity** con el contexto de datos `PetClinicDbContext` en `PetClinic.Infrastructure`.
+  * Implementación del interceptor automático de base de datos para inyectar propiedades de sombra (`CreatedBy`, `CreatedAt`, `UpdatedAt`) en todas las entidades del dominio de negocio (excluyendo `TareasPredefinidas` y `RegistroPeso`).
+  * Desarrollo del servicio y controlador de autenticación JWT en backend (`/api/auth/login` y `/api/auth/me`).
+  * Integración en frontend (`PetClinic.Web`) del `AuthContext`, guardianes de rutas React Router (`ProtectedRoute`), y el menú superior adaptativo `RibbonMenu` condicional según roles de sesión.
+  * Diseño e implementación de la pantalla de inicio de sesión (`Login.tsx`) con estética "Clinical Precision" y selector rápido de cuentas de desarrollo.
