@@ -43,6 +43,9 @@ public abstract class IntegrationTestBase
         var scope = ServiceProvider.CreateScope();
         DbContext = scope.ServiceProvider.GetRequiredService<PetClinicDbContext>();
 
+        // Asegurar un estado limpio antes de sembrar los datos de la prueba
+        await CleanDatabaseTablesAsync();
+
         // Asegurar que los datos base estén sembrados al iniciar cada prueba
         await SeedBaseDataAsync();
     }
@@ -94,9 +97,9 @@ public abstract class IntegrationTestBase
             {
                 await DbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [{table}]");
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignorar si la tabla está vacía o no tiene relación en este momento
+                Console.WriteLine($"Error al limpiar tabla {table}: {ex.Message}");
             }
         }
     }
