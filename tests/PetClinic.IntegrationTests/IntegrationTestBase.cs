@@ -22,6 +22,9 @@ public abstract class IntegrationTestBase
     protected PetClinicDbContext DbContext = null!;
     protected IServiceProvider ServiceProvider = null!;
 
+    private static bool _dbInitialized = false;
+    private static readonly object _dbInitLock = new();
+
     [AssemblyInitialize]
     public static void AssemblyInit(TestContext context)
     {
@@ -42,6 +45,15 @@ public abstract class IntegrationTestBase
         
         var scope = ServiceProvider.CreateScope();
         DbContext = scope.ServiceProvider.GetRequiredService<PetClinicDbContext>();
+
+        lock (_dbInitLock)
+        {
+            if (!_dbInitialized)
+            {
+                DbContext.Database.EnsureCreated();
+                _dbInitialized = true;
+            }
+        }
 
         // Asegurar un estado limpio antes de sembrar los datos de la prueba
         await CleanDatabaseTablesAsync();
