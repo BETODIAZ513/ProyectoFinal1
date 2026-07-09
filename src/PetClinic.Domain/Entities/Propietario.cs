@@ -10,4 +10,7 @@ public class Propietario
     public string CorreoElectronico { get; set; } = string.Empty;
     public string Direccion { get; set; } = string.Empty;
     public bool Activo { get; set; } = true;
+    public string? FirebaseUserId { get; set; }
+    public string? CodigoVinculacion { get; set; }
+    public DateTime? ExpiracionCodigo { get; set; }
 }

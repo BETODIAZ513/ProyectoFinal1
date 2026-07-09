@@ -50,6 +50,7 @@ public abstract class IntegrationTestBase
         {
             if (!_dbInitialized)
             {
+                DbContext.Database.EnsureDeleted();
                 DbContext.Database.EnsureCreated();
                 _dbInitialized = true;
             }

@@ -24,8 +24,8 @@ public class PropietarioIntegrationTests : IntegrationTestBase
     [TestMethod]
     public async Task GetAll_AsNonAdmin_ReturnsForbidden()
     {
-        // Arrange - Login as a receptionist, which does not have the Admin role
-        await AuthenticateAsync("recep1@petclinic.com", "Admin123!");
+        // Arrange - Login as a veterinarian, which does not have the Admin/Receptionist roles
+        await AuthenticateAsync("vet1@petclinic.com", "Admin123!");
 
         // Act
         var response = await Client.GetAsync("api/propietarios");

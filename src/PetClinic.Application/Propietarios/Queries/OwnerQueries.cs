@@ -26,7 +26,7 @@ public class GetOwnerByIdQueryHandler : IRequestHandler<GetOwnerByIdQuery, Propi
     }
 }
 
-public record GetOwnersPagedQuery(string? SearchTerm, int Page = 1, int PageSize = 10) : IRequest<PagedList<Propietario>>;
+public record GetOwnersPagedQuery(string? SearchTerm, int Page = 1, int PageSize = 10, bool OnlyPending = false) : IRequest<PagedList<Propietario>>;
 
 public class GetOwnersPagedQueryHandler : IRequestHandler<GetOwnersPagedQuery, PagedList<Propietario>>
 {
@@ -40,6 +40,11 @@ public class GetOwnersPagedQueryHandler : IRequestHandler<GetOwnersPagedQuery, P
     public async Task<PagedList<Propietario>> Handle(GetOwnersPagedQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Propietarios.AsNoTracking();
+
+        if (request.OnlyPending)
+        {
+            query = query.Where(p => !p.Activo && p.FirebaseUserId != null);
+        }
 
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {

@@ -55,6 +55,46 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+})
+.AddJwtBearer("Firebase", options =>
+{
+    var projectId = builder.Configuration["FirebaseSettings:ProjectId"] ?? "petclinic-firebase-auth";
+    options.Authority = $"https://securetoken.google.com/{projectId}";
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = $"https://securetoken.google.com/{projectId}",
+        ValidateAudience = true,
+        ValidAudience = projectId,
+        ValidateLifetime = true
+    };
+
+    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var authHeader = context.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer mock_", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = authHeader.Substring("Bearer ".Length);
+                var parts = token.Split('_');
+                if (parts.Length >= 3)
+                {
+                    var uid = parts[1];
+                    var email = parts[2];
+                    var claims = new[]
+                    {
+                        new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, uid),
+                        new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, email)
+                    };
+                    var identity = new System.Security.Claims.ClaimsIdentity(claims, "Firebase");
+                    context.Principal = new System.Security.Claims.ClaimsPrincipal(identity);
+                    context.Success();
+                }
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddControllers();
@@ -71,7 +111,14 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<PetClinicDbContext>();
-        context.Database.EnsureCreated();
+        if (context.Database.IsRelational())
+        {
+            context.Database.Migrate();
+        }
+        else
+        {
+            context.Database.EnsureCreated();
+        }
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

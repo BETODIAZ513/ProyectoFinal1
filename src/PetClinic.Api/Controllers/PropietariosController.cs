@@ -11,7 +11,6 @@ namespace PetClinic.Api.Controllers;
 
 [ApiController]
 [Route("api/propietarios")]
-[Authorize(Roles = "Administrador")] // REQ-PRO-01: Restringido a Administradores
 public class PropietariosController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,13 +21,15 @@ public class PropietariosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedList<Propietario>>> GetPaged([FromQuery] string? searchTerm, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    [Authorize(Roles = "Administrador,Recepcionista")]
+    public async Task<ActionResult<PagedList<Propietario>>> GetPaged([FromQuery] string? searchTerm, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] bool onlyPending = false)
     {
-        var result = await _mediator.Send(new GetOwnersPagedQuery(searchTerm, page, pageSize));
+        var result = await _mediator.Send(new GetOwnersPagedQuery(searchTerm, page, pageSize, onlyPending));
         return Ok(result);
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<Propietario>> GetById(int id)
     {
         var result = await _mediator.Send(new GetOwnerByIdQuery(id));
@@ -40,6 +41,7 @@ public class PropietariosController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<int>> Create([FromBody] CreateOwnerCommand command)
     {
         try
@@ -54,6 +56,7 @@ public class PropietariosController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateOwnerCommand command)
     {
         if (id != command.Id)
@@ -77,12 +80,40 @@ public class PropietariosController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Delete(int id)
     {
         var succeeded = await _mediator.Send(new DeleteOwnerCommand(id));
         if (!succeeded)
         {
             return NotFound(new { Message = "El propietario no fue encontrado para desactivar." });
+        }
+        return NoContent();
+    }
+
+    [HttpPost("{id}/generar-codigo")]
+    [Authorize(Roles = "Administrador,Recepcionista")]
+    public async Task<ActionResult<object>> GenerarCodigo(int id)
+    {
+        try
+        {
+            var code = await _mediator.Send(new GenerarCodigoVinculacionCommand(id));
+            return Ok(new { Codigo = code });
+        }
+        catch (System.Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id}/activar")]
+    [Authorize(Roles = "Administrador,Recepcionista")]
+    public async Task<IActionResult> Activar(int id)
+    {
+        var succeeded = await _mediator.Send(new ActivarPropietarioCommand(id));
+        if (!succeeded)
+        {
+            return NotFound(new { Message = "El propietario no fue encontrado." });
         }
         return NoContent();
     }

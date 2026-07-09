@@ -122,4 +122,116 @@ public class PropietarioTests : TestBase
         Assert.IsFalse(result.IsValid);
         Assert.IsTrue(result.Errors.Exists(e => e.PropertyName == "CorreoElectronico" && e.ErrorMessage.Contains("formato")));
     }
+
+    [TestMethod]
+    public async Task Handle_ShouldGenerateOtpCode_WhenRequested()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var owner = new Propietario { Id = 10, NombreCompleto = "Test Otp", Activo = true };
+        context.Propietarios.Add(owner);
+        await context.SaveChangesAsync();
+
+        var handler = new GenerarCodigoVinculacionCommandHandler(context);
+        var command = new GenerarCodigoVinculacionCommand(10);
+
+        // Act
+        var code = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.IsNotNull(code);
+        Assert.AreEqual(6, code.Length);
+        
+        var updated = await context.Propietarios.FindAsync(10);
+        Assert.IsNotNull(updated);
+        Assert.AreEqual(code, updated.CodigoVinculacion);
+        Assert.IsNotNull(updated.ExpiracionCodigo);
+        Assert.IsTrue(updated.ExpiracionCodigo.Value > DateTime.UtcNow);
+    }
+
+    [TestMethod]
+    public async Task Handle_ShouldLinkAccountAndActivate_WhenOtpIsValid()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var owner = new Propietario 
+        { 
+            Id = 11, 
+            NombreCompleto = "Test Link", 
+            Activo = false, 
+            CodigoVinculacion = "999999", 
+            ExpiracionCodigo = DateTime.UtcNow.AddSeconds(150) 
+        };
+        context.Propietarios.Add(owner);
+        await context.SaveChangesAsync();
+
+        var handler = new VincularPortalCommandHandler(context);
+        var command = new VincularPortalCommand("firebase-uid-11", "link@test.com", "999999");
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.IsTrue(result);
+        var updated = await context.Propietarios.FindAsync(11);
+        Assert.IsNotNull(updated);
+        Assert.IsTrue(updated.Activo);
+        Assert.AreEqual("firebase-uid-11", updated.FirebaseUserId);
+        Assert.AreEqual("link@test.com", updated.CorreoElectronico);
+        Assert.IsNull(updated.CodigoVinculacion);
+        Assert.IsNull(updated.ExpiracionCodigo);
+    }
+
+    [TestMethod]
+    public async Task Handle_ShouldThrowException_WhenOtpIsExpired()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var owner = new Propietario 
+        { 
+            Id = 12, 
+            NombreCompleto = "Test Expired", 
+            Activo = false, 
+            CodigoVinculacion = "888888", 
+            ExpiracionCodigo = DateTime.UtcNow.AddSeconds(-5) // Expired
+        };
+        context.Propietarios.Add(owner);
+        await context.SaveChangesAsync();
+
+        var handler = new VincularPortalCommandHandler(context);
+        var command = new VincularPortalCommand("firebase-uid-12", "expired@test.com", "888888");
+
+        // Act & Assert
+        bool threw = false;
+        try
+        {
+            await handler.Handle(command, CancellationToken.None);
+        }
+        catch (Exception ex) when (ex.Message.Contains("ha expirado"))
+        {
+            threw = true;
+        }
+
+        Assert.IsTrue(threw, "Debería lanzar excepción porque el código de vinculación expiró.");
+    }
+
+    [TestMethod]
+    public async Task Handle_ShouldCreateInactiveOwner_WhenRemoteSignUp()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var handler = new RegistrarPropietarioRemotoCommandHandler(context);
+        var command = new RegistrarPropietarioRemotoCommand("Remote User", "999888777", "remote@test.com", "Remote address", "firebase-remote-uid");
+
+        // Act
+        var id = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.IsTrue(id > 0);
+        var created = await context.Propietarios.FindAsync(id);
+        Assert.IsNotNull(created);
+        Assert.IsFalse(created.Activo, "El propietario registrado remotamente debe crearse como inactivo (pendiente).");
+        Assert.AreEqual("firebase-remote-uid", created.FirebaseUserId);
+        Assert.AreEqual("remote@test.com", created.CorreoElectronico);
+    }
 }
