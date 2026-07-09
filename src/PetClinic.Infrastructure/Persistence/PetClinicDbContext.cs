@@ -26,6 +26,8 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
     public DbSet<RegistroPeso> Pesos => Set<RegistroPeso>();
     public DbSet<Cita> Citas => Set<Cita>();
     public DbSet<DetalleConsulta> DetallesConsultas => Set<DetalleConsulta>();
+    public DbSet<TareaPredefinida> TareasPredefinidas => Set<TareaPredefinida>();
+    public DbSet<TareaClinica> TareasClinicas => Set<TareaClinica>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -132,6 +134,49 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
                 .WithMany()
                 .HasForeignKey(e => e.VeterinarioId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuración de TareaPredefinida
+        modelBuilder.Entity<TareaPredefinida>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nombre).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Descripcion).HasMaxLength(250);
+        });
+
+        // Seed de TareasPredefinidas
+        modelBuilder.Entity<TareaPredefinida>().HasData(
+            new TareaPredefinida { Id = 1, Nombre = "Colocación de Catéter", Descripcion = "Instalación de vía endovenosa periférica." },
+            new TareaPredefinida { Id = 2, Nombre = "Control de Temperatura", Descripcion = "Medición térmica rectal cada 4 horas." },
+            new TareaPredefinida { Id = 3, Nombre = "Administración de Medicación", Descripcion = "Suministro de fármacos indicados según receta." },
+            new TareaPredefinida { Id = 4, Nombre = "Curación de Heridas", Descripcion = "Limpieza asepsia y cambio de vendaje." }
+        );
+
+        // Configuración de TareaClinica
+        modelBuilder.Entity<TareaClinica>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Titulo).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Descripcion).HasMaxLength(500);
+            entity.Property(e => e.Estado).HasMaxLength(20).IsRequired();
+
+            // Relación TareaClinica -> Mascota (1:N)
+            entity.HasOne<Mascota>()
+                .WithMany()
+                .HasForeignKey(e => e.MascotaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación TareaClinica -> Veterinario (1:N)
+            entity.HasOne<Veterinario>()
+                .WithMany()
+                .HasForeignKey(e => e.VeterinarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación TareaClinica -> Cita (1:N, opcional)
+            entity.HasOne<Cita>()
+                .WithMany()
+                .HasForeignKey(e => e.CitaId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Configuración dinámica de Shadow Properties de auditoría

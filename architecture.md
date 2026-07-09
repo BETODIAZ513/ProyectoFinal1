@@ -133,3 +133,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Creación de consultas CQRS para obtener el historial clínico individual (`GetClinicalHistoryQuery`) y el log administrativo global de citas archivadas (`GetAppointmentsHistoryQuery`).
   * Exposición de endpoints en `/api/consultas-detalles` dentro de `PetClinic.Api` con control de accesos restringido.
   * Desarrollo en React de la vista `History` (log de auditoría de citas operadas) y de la pantalla interactiva `ClinicalHistory` (buscador y ficha médica de pacientes consolidando demográficos, pesos e historial clínico de diagnósticos).
+
+* **Sprint 7: Tareas Médicas y Auxiliares Clínicos (Completado)**
+  * Definición de las entidades `TareaPredefinida` (catálogo estático) y `TareaClinica` (tareas dinámicas de pacientes) en `PetClinic.Domain` y sus mapeos relacionales.
+  * Configuración de la semilla de datos (Seed Data) en el DbContext para registrar automáticamente las plantillas iniciales de cuidado clínico, respetando la exclusión de shadow properties de auditoría (`REQ-SEG-03`).
+  * Implementación de comandos CQRS para registrar tareas en estado "Pendiente" y transicionar sus estados en el flujo operativo (`Pendiente` -> `En Progreso` -> `Completada`).
+  * Exposición de endpoints específicos en `/api/tareas-clinicas` y `/api/tareas-predefinidas` en `PetClinic.Api`.
+  * Desarrollo en React de la vista `MedicalTasks` que renderiza un tablero Kanban interactivo para auxiliares clínicos, con un formulario modal de asignación que pre-rellena títulos e instrucciones clínicas a partir de las plantillas del catálogo.

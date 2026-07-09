@@ -10,6 +10,7 @@ import { Reception } from "./pages/Reception";
 import { Consultations } from "./pages/Consultations";
 import { History } from "./pages/History";
 import { ClinicalHistory } from "./pages/ClinicalHistory";
+import { MedicalTasks } from "./pages/MedicalTasks";
 import { Placeholder } from "./pages/Placeholder";
 import { RibbonMenu } from "./components/RibbonMenu";
 import "./App.css";
@@ -68,7 +69,7 @@ function App() {
             <Route path="/historial-clinico" element={<ClinicalHistory />} />
 
             {/* Acceso restringido para Auxiliar Clínico */}
-            <Route path="/tareas-medicas" element={<Placeholder title="Bandeja de Tareas Médicas" />} />
+            <Route path="/tareas-medicas" element={<MedicalTasks />} />
             <Route path="/hospitalizacion" element={<Placeholder title="Monitor de Pacientes Hospitalizados" />} />
           </Route>
 
