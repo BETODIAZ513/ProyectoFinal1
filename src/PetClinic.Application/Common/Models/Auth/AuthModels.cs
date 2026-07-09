@@ -23,4 +23,11 @@ public class UserDto
     public string Email { get; set; } = string.Empty;
     public string NombreCompleto { get; set; } = string.Empty;
     public IEnumerable<string> Roles { get; set; } = new List<string>();
+    public int? PropietarioId { get; set; }
+}
+
+public class RegisterRequest
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

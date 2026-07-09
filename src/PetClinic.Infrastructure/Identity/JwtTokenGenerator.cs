@@ -18,7 +18,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _configuration = configuration;
     }
 
-    public string GenerateToken(string userId, string userName, string fullName, IEnumerable<string> roles)
+    public string GenerateToken(string userId, string userName, string fullName, IEnumerable<string> roles, string? propietarioId = null)
     {
         var secret = _configuration["JwtSettings:Secret"] ?? "SuperSecretKeyNeedToBeLongEnoughToAvoidError_Sprint2";
         var issuer = _configuration["JwtSettings:Issuer"] ?? "PetClinicApi";
@@ -35,6 +35,11 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new Claim("fullName", fullName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        if (!string.IsNullOrEmpty(propietarioId))
+        {
+            claims.Add(new Claim("propietarioId", propietarioId));
+        }
 
         foreach (var role in roles)
         {

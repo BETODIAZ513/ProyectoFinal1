@@ -15,7 +15,7 @@ public static class DbInitializer
         RoleManager<IdentityRole> roleManager)
     {
         // 1. Asegurar Roles
-        var roles = new[] { "Administrador", "Veterinario", "AuxiliarClinico", "Recepcionista" };
+        var roles = new[] { "Administrador", "Veterinario", "AuxiliarClinico", "Recepcionista", "Propietario" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
@@ -318,6 +318,33 @@ public static class DbInitializer
                 });
             }
             await context.SaveChangesAsync();
+        }
+
+        // 13. Sembrar Usuarios del Portal de Clientes (para Juan Perez y Maria Garcia)
+        var portalUsersInfo = new[]
+        {
+            new { Email = "juan.perez@test.com", Nombre = "Juan Perez" },
+            new { Email = "maria.garcia@test.com", Nombre = "Maria Garcia" }
+        };
+
+        foreach (var pu in portalUsersInfo)
+        {
+            if (await userManager.FindByEmailAsync(pu.Email) == null)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = pu.Email,
+                    Email = pu.Email,
+                    NombreCompleto = pu.Nombre,
+                    EmailConfirmed = true,
+                    Activo = true
+                };
+                var result = await userManager.CreateAsync(user, "Admin123!");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, "Propietario");
+                }
+            }
         }
     }
 }

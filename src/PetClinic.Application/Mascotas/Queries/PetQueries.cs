@@ -94,3 +94,38 @@ public class GetPetsPagedQueryHandler : IRequestHandler<GetPetsPagedQuery, Paged
         return new PagedList<MascotaDto>(items, totalCount, request.Page, request.PageSize);
     }
 }
+
+public record GetPetsForPortalQuery(int PropietarioId) : IRequest<List<MascotaDto>>;
+
+public class GetPetsForPortalQueryHandler : IRequestHandler<GetPetsForPortalQuery, List<MascotaDto>>
+{
+    private readonly IPetClinicDbContext _context;
+
+    public GetPetsForPortalQueryHandler(IPetClinicDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<List<MascotaDto>> Handle(GetPetsForPortalQuery request, CancellationToken cancellationToken)
+    {
+        var pets = await (from m in _context.Mascotas.AsNoTracking()
+                           join o in _context.Propietarios.AsNoTracking() on m.PropietarioId equals o.Id
+                           where m.PropietarioId == request.PropietarioId && m.Activo
+                           orderby m.Nombre
+                           select new MascotaDto
+                           {
+                               Id = m.Id,
+                               Nombre = m.Nombre,
+                               Especie = m.Especie,
+                               Raza = m.Raza,
+                               FechaNacimiento = m.FechaNacimiento,
+                               Sexo = m.Sexo,
+                               Color = m.Color,
+                               PropietarioId = m.PropietarioId,
+                               PropietarioNombreCompleto = o.NombreCompleto,
+                               Activo = m.Activo
+                           }).ToListAsync(cancellationToken);
+
+        return pets;
+    }
+}

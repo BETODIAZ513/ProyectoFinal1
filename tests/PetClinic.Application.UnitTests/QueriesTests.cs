@@ -313,5 +313,68 @@ public class QueriesTests : TestBase
         Assert.AreEqual(2, result[0].Id); // Most recent first
         Assert.AreEqual(1, result[1].Id);
         Assert.IsTrue(result.All(m => m.HospitalizacionId == 5));
+     }
+
+    [TestMethod]
+    public async Task GetPetsForPortal_ShouldReturnOnlyActivePetsOfSpecificPropietario()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var owners = new[]
+        {
+            new Propietario { Id = 1, NombreCompleto = "Owner One", Activo = true },
+            new Propietario { Id = 2, NombreCompleto = "Owner Two", Activo = true }
+        };
+        context.Propietarios.AddRange(owners);
+
+        var pets = new[]
+        {
+            new Mascota { Id = 10, Nombre = "Zelda", PropietarioId = 1, Activo = true },
+            new Mascota { Id = 20, Nombre = "Coco", PropietarioId = 1, Activo = true },
+            new Mascota { Id = 30, Nombre = "Rocky", PropietarioId = 1, Activo = false }, // Inactiva
+            new Mascota { Id = 40, Nombre = "Luna", PropietarioId = 2, Activo = true } // De otro dueño
+        };
+        context.Mascotas.AddRange(pets);
+        await context.SaveChangesAsync();
+
+        var handler = new GetPetsForPortalQueryHandler(context);
+        var query = new GetPetsForPortalQuery(1);
+
+        // Act
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Coco", result[0].Nombre); // Ordenado alfabéticamente
+        Assert.AreEqual("Zelda", result[1].Nombre);
+    }
+
+    [TestMethod]
+    public async Task GetActiveHospitalizationByPet_ShouldReturnActiveHospitalizationForPet()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var pet = new Mascota { Id = 5, Nombre = "Sparky", Activo = true };
+        context.Mascotas.Add(pet);
+
+        var hospitalizations = new[]
+        {
+            new Hospitalizacion { Id = 1, MascotaId = 5, Estado = "Alta", FechaIngreso = DateTime.UtcNow.AddDays(-5), FechaAlta = DateTime.UtcNow.AddDays(-3), NumeroJaula = "Jaula 1" },
+            new Hospitalizacion { Id = 2, MascotaId = 5, Estado = "Internado", FechaIngreso = DateTime.UtcNow, NumeroJaula = "Jaula 2" }
+        };
+        context.Hospitalizaciones.AddRange(hospitalizations);
+        await context.SaveChangesAsync();
+
+        var handler = new GetActiveHospitalizationByPetQueryHandler(context);
+        var query = new GetActiveHospitalizationByPetQuery(5);
+
+        // Act
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Id);
+        Assert.AreEqual("Internado", result.Estado);
+        Assert.AreEqual("Jaula 2", result.NumeroJaula);
     }
 }

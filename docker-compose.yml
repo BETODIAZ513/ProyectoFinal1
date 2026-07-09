@@ -36,5 +36,15 @@ services:
     depends_on:
       - petclinic-api
 
+  petclinic-portalweb:
+    container_name: petclinic-portalweb
+    build:
+      context: ./src/PetClinic.PortalWeb
+      dockerfile: Dockerfile
+    ports:
+      - "5211:80"
+    depends_on:
+      - petclinic-api
+
 volumes:
   mssql_data:

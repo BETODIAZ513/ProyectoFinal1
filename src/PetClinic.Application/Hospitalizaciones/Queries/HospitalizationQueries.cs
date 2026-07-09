@@ -77,3 +77,38 @@ public class GetMonitoringHistoryQueryHandler : IRequestHandler<GetMonitoringHis
             .ToListAsync(cancellationToken);
     }
 }
+
+public record GetActiveHospitalizationByPetQuery(int MascotaId) : IRequest<HospitalizacionDto?>;
+
+public class GetActiveHospitalizationByPetQueryHandler : IRequestHandler<GetActiveHospitalizationByPetQuery, HospitalizacionDto?>
+{
+    private readonly IPetClinicDbContext _context;
+
+    public GetActiveHospitalizationByPetQueryHandler(IPetClinicDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<HospitalizacionDto?> Handle(GetActiveHospitalizationByPetQuery request, CancellationToken cancellationToken)
+    {
+        var activeHosp = await (from h in _context.Hospitalizaciones.AsNoTracking()
+                                join m in _context.Mascotas.AsNoTracking() on h.MascotaId equals m.Id
+                                where h.MascotaId == request.MascotaId && h.Estado == "Internado"
+                                select new HospitalizacionDto
+                                {
+                                    Id = h.Id,
+                                    MascotaId = h.MascotaId,
+                                    MascotaNombre = m.Nombre,
+                                    Especie = m.Especie,
+                                    Raza = m.Raza,
+                                    Sexo = m.Sexo,
+                                    FechaIngreso = h.FechaIngreso,
+                                    FechaAlta = h.FechaAlta,
+                                    Motivo = h.Motivo,
+                                    Estado = h.Estado,
+                                    NumeroJaula = h.NumeroJaula
+                                }).FirstOrDefaultAsync(cancellationToken);
+
+        return activeHosp;
+    }
+}
