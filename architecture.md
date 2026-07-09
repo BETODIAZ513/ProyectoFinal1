@@ -153,3 +153,12 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Configuración de un `Dockerfile` para la SPA en React, compilando assets con Node.js y sirviéndolos mediante un contenedor ligero Nginx.
   * Diseño del archivo de configuración `nginx.conf` de la SPA con redirección interna a `index.html` para soportar React Router dinámico.
   * Creación del archivo de orquestación `docker-compose.yml` en la raíz para enlazar el backend y el frontend exponiendo los puertos locales `5210` y `5173`.
+
+* **Sprint 10: Aseguramiento de Calidad y Cobertura de Pruebas (Completado)**
+  * Creación de clases de pruebas de unidad estructuradas bajo MSTest en `tests/PetClinic.Application.UnitTests/`.
+  * Simulación y mocking aislado de persistencia en base de datos en memoria (`InMemoryDatabase`) con identificadores aleatorios únicos (`Guid.NewGuid().ToString()`) por método de prueba.
+  * Implementación de tests para la prevención de solapamientos horários de citas médicas (intervalos de 30 minutos).
+  * Implementación de tests para la restricción de jaulas exclusivas en admisiones de hospitalización.
+  * Validación del enrutamiento de consultas clínicas y transiciones de estado de visitas a `"Completada"`.
+  * Validación de límites de peso corporal para mascotas y registros de peso (FluentValidation).
+  * Validación de inyección automática de propiedades de sombra de auditoría (`CreatedBy`, `CreatedAt`) y exclusiones correspondientes (`TareaPredefinida` y `RegistroPeso`).
