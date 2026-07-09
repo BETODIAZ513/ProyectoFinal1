@@ -147,3 +147,9 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Implementación de comandos CQRS para admisiones con validación de jaula única, altas médicas y registro periódico de signos vitales (temperatura rectal, frecuencias cardíaca y respiratoria, nivel de alerta).
   * Exposición de endpoints bajo `/api/hospitalizaciones` y `/api/hospitalizaciones/{id}/monitoreos` en `PetClinic.Api`.
   * Desarrollo en React de la vista `Hospitalization` para monitorizar jaulas, admitir pacientes, dar de alta y visualizar la telemetría cronológica de la evolución física de las mascotas.
+
+* **Sprint 9: Dockerización del Proyecto (Completado)**
+  * Configuración de un `Dockerfile` multi-etapa para compilar y empaquetar la API ASP.NET Core (.NET 10).
+  * Configuración de un `Dockerfile` para la SPA en React, compilando assets con Node.js y sirviéndolos mediante un contenedor ligero Nginx.
+  * Diseño del archivo de configuración `nginx.conf` de la SPA con redirección interna a `index.html` para soportar React Router dinámico.
+  * Creación del archivo de orquestación `docker-compose.yml` en la raíz para enlazar el backend y el frontend exponiendo los puertos locales `5210` y `5173`.

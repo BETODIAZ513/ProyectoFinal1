@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  petclinic-api:
+    container_name: petclinic-api
+    build:
+      context: .
+      dockerfile: src/PetClinic.Api/Dockerfile
+    ports:
+      - "5210:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
+  petclinic-web:
+    container_name: petclinic-web
+    build:
+      context: ./src/PetClinic.Web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - petclinic-api
