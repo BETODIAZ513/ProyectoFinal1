@@ -49,10 +49,10 @@ export const Login: React.FC = () => {
   // Función rápida para rellenar credenciales de prueba en desarrollo
   const fillCredentials = (role: string) => {
     setPassword("Admin123!");
-    if (role === "admin") setUsernameOrEmail("admin@petclinic.com");
-    if (role === "vet") setUsernameOrEmail("veterinario@petclinic.com");
-    if (role === "aux") setUsernameOrEmail("auxiliar@petclinic.com");
-    if (role === "rec") setUsernameOrEmail("recepcionista@petclinic.com");
+    if (role === "admin") setUsernameOrEmail("admin1@petclinic.com");
+    if (role === "vet") setUsernameOrEmail("vet1@petclinic.com");
+    if (role === "aux") setUsernameOrEmail("aux1@petclinic.com");
+    if (role === "rec") setUsernameOrEmail("recep1@petclinic.com");
   };
 
   return (
