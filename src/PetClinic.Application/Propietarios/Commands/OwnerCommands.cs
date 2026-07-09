@@ -160,6 +160,11 @@ public class VincularPortalCommandHandler : IRequestHandler<VincularPortalComman
             throw new Exception("El código ha expirado. Por favor, solicita uno nuevo en recepción.");
         }
 
+        if (!string.Equals(propietario.CorreoElectronico, request.Correo, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception("El correo de la cuenta de Google no coincide con el correo registrado en la clínica.");
+        }
+
         // Vincular y activar inmediatamente
         propietario.FirebaseUserId = request.FirebaseUserId;
         propietario.CorreoElectronico = request.Correo;

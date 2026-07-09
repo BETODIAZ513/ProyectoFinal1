@@ -158,6 +158,9 @@ public class PropietarioTests : TestBase
         { 
             Id = 11, 
             NombreCompleto = "Test Link", 
+            CorreoElectronico = "link@test.com",
+            Telefono = "123",
+            Direccion = "123",
             Activo = false, 
             CodigoVinculacion = "999999", 
             ExpiracionCodigo = DateTime.UtcNow.AddSeconds(150) 
@@ -191,6 +194,9 @@ public class PropietarioTests : TestBase
         { 
             Id = 12, 
             NombreCompleto = "Test Expired", 
+            CorreoElectronico = "expired@test.com",
+            Telefono = "123",
+            Direccion = "123",
             Activo = false, 
             CodigoVinculacion = "888888", 
             ExpiracionCodigo = DateTime.UtcNow.AddSeconds(-5) // Expired
@@ -213,6 +219,42 @@ public class PropietarioTests : TestBase
         }
 
         Assert.IsTrue(threw, "Debería lanzar excepción porque el código de vinculación expiró.");
+    }
+
+    [TestMethod]
+    public async Task Handle_ShouldThrowException_WhenEmailsDoNotMatch()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var owner = new Propietario 
+        { 
+            Id = 13, 
+            NombreCompleto = "Test Mismatch", 
+            CorreoElectronico = "registered@test.com",
+            Telefono = "123",
+            Direccion = "123",
+            Activo = false, 
+            CodigoVinculacion = "555555", 
+            ExpiracionCodigo = DateTime.UtcNow.AddSeconds(150)
+        };
+        context.Propietarios.Add(owner);
+        await context.SaveChangesAsync();
+
+        var handler = new VincularPortalCommandHandler(context);
+        var command = new VincularPortalCommand("firebase-uid-13", "wrong@test.com", "555555");
+
+        // Act & Assert
+        bool threw = false;
+        try
+        {
+            await handler.Handle(command, CancellationToken.None);
+        }
+        catch (Exception ex) when (ex.Message.Contains("no coincide"))
+        {
+            threw = true;
+        }
+
+        Assert.IsTrue(threw, "Debería lanzar excepción porque los correos no coinciden.");
     }
 
     [TestMethod]
