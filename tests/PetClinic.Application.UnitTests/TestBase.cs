@@ -24,3 +24,16 @@ public class TestCurrentUserService : ICurrentUserService
     public string? UserId => "TestUser";
     public string? UserName => "test_user";
 }
+
+public class TestIdentityService : IIdentityService
+{
+    public Task<(bool Succeeded, string UserId, string ErrorMessage)> CreateUserAsync(
+        string userName, 
+        string email, 
+        string password, 
+        string fullName, 
+        IEnumerable<string> roles)
+    {
+        return Task.FromResult((true, "Mock_User_Id_123", ""));
+    }
+}
