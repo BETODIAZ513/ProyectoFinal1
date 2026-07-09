@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from './firebase';
 import { 
   LogOut, 
   Sun, 
@@ -203,6 +205,28 @@ export default function App() {
     }
   };
 
+  // Google Login Real trigger using Firebase Auth popup
+  const handleGoogleLoginReal = async () => {
+    setLoading(true);
+    setErrorMsg(null);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const userToken = await result.user.getIdToken();
+      setToken(userToken);
+      localStorage.setItem('token', userToken);
+    } catch (err: any) {
+      console.error("Error en Firebase Auth: ", err);
+      // Friendly message for popups blocked or closed by user
+      if (err.code === 'auth/popup-closed-by-user') {
+        setErrorMsg("Inicio de sesión cancelado por el usuario.");
+      } else {
+        setErrorMsg("Error al iniciar sesión con Google (Firebase): " + (err.message || "Inténtelo de nuevo"));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Google Login Mock trigger
   const handleGoogleLoginMock = () => {
     setLoading(true);
@@ -364,21 +388,10 @@ export default function App() {
               Utilice su cuenta de Google registrada en la clínica para ingresar al portal.
             </p>
 
-            <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label className="form-label">Correo Electrónico de Google</label>
-              <input 
-                type="email"
-                className="form-input" 
-                value={googleEmail}
-                onChange={(e) => setGoogleEmail(e.target.value)}
-                placeholder="ej: juan.perez@test.com"
-              />
-            </div>
-
             <button 
-              onClick={handleGoogleLoginMock} 
+              onClick={handleGoogleLoginReal} 
               className="btn-primary" 
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#4285F4' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#4285F4', marginBottom: '20px' }}
               disabled={loading}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -387,8 +400,36 @@ export default function App() {
                 <path d="M3.95 10.72A5.4 5.4 0 0 1 3.6 9c0-.6.1-1.19.35-1.72V4.96H.95A9 9 0 0 0 .95 13.04l3-2.32z" fill="#FBBC05"/>
                 <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2A9 9 0 0 0 .95 4.96l3 2.32C4.66 5.16 6.65 3.58 9 3.58z" fill="#EA4335"/>
               </svg>
-              {loading ? 'Cargando...' : 'Iniciar Sesión con Google'}
+              {loading ? 'Conectando...' : 'Iniciar Sesión con Google'}
             </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: 'var(--text-secondary)' }}>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border-color)', opacity: 0.3 }} />
+              <span style={{ padding: '0 10px', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.5px' }}>Ó MOCK LOGIN (Desarrollo)</span>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border-color)', opacity: 0.3 }} />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label">Simular Correo de Google</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input 
+                  type="email"
+                  className="form-input" 
+                  value={googleEmail}
+                  onChange={(e) => setGoogleEmail(e.target.value)}
+                  placeholder="ej: juan.perez@test.com"
+                  style={{ flex: 1 }}
+                />
+                <button 
+                  onClick={handleGoogleLoginMock}
+                  className="btn-primary"
+                  style={{ width: 'auto', padding: '0 16px', background: '#3b82f6', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
+                  disabled={loading}
+                >
+                  Simular
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
