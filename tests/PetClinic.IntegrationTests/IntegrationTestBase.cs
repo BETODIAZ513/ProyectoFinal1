@@ -79,6 +79,10 @@ public abstract class IntegrationTestBase
             "Mascotas",
             "Propietarios",
             "Veterinarios",
+            "AspNetUserClaims",
+            "AspNetUserLogins",
+            "AspNetUserTokens",
+            "AspNetRoleClaims",
             "AspNetUserRoles",
             "AspNetUsers",
             "AspNetRoles"
