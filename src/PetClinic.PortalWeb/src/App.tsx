@@ -116,6 +116,16 @@ export default function App() {
     }
   }, [token]);
 
+  // Auto-dismiss success messages after 3 seconds
+  useEffect(() => {
+    if (successMsg) {
+      const timer = setTimeout(() => {
+        setSuccessMsg(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMsg]);
+
   const fetchStatus = async () => {
     setLoading(true);
     setErrorMsg(null);
