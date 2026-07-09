@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  petclinic-db:
-    container_name: petclinic-db
+  petclinic-db-server:
+    container_name: petclinic-db-server
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=YourStrong@Password123!
+      - MSSQL_SA_PASSWORD=ClinicaMascotas2026#
     volumes:
       - mssql_data:/var/opt/mssql
 
@@ -22,9 +22,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=petclinic-db;Database=PetClinicDb;User Id=sa;Password=YourStrong@Password123!;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=petclinic-db-server;Database=PetClinicDb;User Id=sa;Password=ClinicaMascotas2026#;TrustServerCertificate=True;
     depends_on:
-      - petclinic-db
+      - petclinic-db-server
 
   petclinic-web:
     container_name: petclinic-web
