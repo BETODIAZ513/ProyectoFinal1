@@ -8,6 +8,8 @@ import { Pets } from "./pages/Pets";
 import { Appointments } from "./pages/Appointments";
 import { Reception } from "./pages/Reception";
 import { Consultations } from "./pages/Consultations";
+import { History } from "./pages/History";
+import { ClinicalHistory } from "./pages/ClinicalHistory";
 import { Placeholder } from "./pages/Placeholder";
 import { RibbonMenu } from "./components/RibbonMenu";
 import "./App.css";
@@ -56,14 +58,14 @@ function App() {
             <Route path="/propietarios" element={<Owners />} />
             <Route path="/mascotas" element={<Pets />} />
             <Route path="/citas" element={<Appointments />} />
-            <Route path="/historial" element={<Placeholder title="Historial Global de Citas" />} />
+            <Route path="/historial" element={<History />} />
 
             {/* Acceso restringido para Recepcionista */}
             <Route path="/recepcion" element={<Reception />} />
 
             {/* Acceso restringido para Veterinario */}
             <Route path="/consultas" element={<Consultations />} />
-            <Route path="/historial-clinico" element={<Placeholder title="Historial Clínico de Pacientes" />} />
+            <Route path="/historial-clinico" element={<ClinicalHistory />} />
 
             {/* Acceso restringido para Auxiliar Clínico */}
             <Route path="/tareas-medicas" element={<Placeholder title="Bandeja de Tareas Médicas" />} />

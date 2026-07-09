@@ -126,3 +126,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Diseño del validador de superposición de agendas horarias para doctores en bloques de tiempo de 30 minutos.
   * Exposición de endpoints específicos en `/api/citas` dentro de `PetClinic.Api` con autorizaciones selectivas de rol.
   * Creación en el frontend de las pantallas de `Appointments` (calendario y programador del administrador), `Reception` (sala de espera y registro de arribos de recepcionistas), y `Consultations` (agenda clínica del veterinario con registro de pesos y cierre de consulta).
+
+* **Sprint 6: Historia Clínica e Historial de Citas (Completado)**
+  * Definición de la entidad `DetalleConsulta` en `PetClinic.Domain` y su correspondiente mapeo relacional en base de datos.
+  * Implementación del guardado transaccional en el command `CreateConsultationDetailCommand` para guardar de forma atómica el diagnóstico y tratamiento, completando simultáneamente el estado de la cita.
+  * Creación de consultas CQRS para obtener el historial clínico individual (`GetClinicalHistoryQuery`) y el log administrativo global de citas archivadas (`GetAppointmentsHistoryQuery`).
+  * Exposición de endpoints en `/api/consultas-detalles` dentro de `PetClinic.Api` con control de accesos restringido.
+  * Desarrollo en React de la vista `History` (log de auditoría de citas operadas) y de la pantalla interactiva `ClinicalHistory` (buscador y ficha médica de pacientes consolidando demográficos, pesos e historial clínico de diagnósticos).

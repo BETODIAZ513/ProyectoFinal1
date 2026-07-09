@@ -38,6 +38,13 @@ export const Consultations: React.FC = () => {
   const [weightError, setWeightError] = useState<string | null>(null);
   const [submittingWeight, setSubmittingWeight] = useState(false);
 
+  // Formulario clínico de cierre de consulta
+  const [diagnosis, setDiagnosis] = useState("");
+  const [treatment, setTreatment] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [closeError, setCloseError] = useState<string | null>(null);
+  const [closeLoading, setCloseLoading] = useState(false);
+
   const fetchDoctorAppointments = async () => {
     setLoading(true);
     try {
@@ -84,6 +91,10 @@ export const Consultations: React.FC = () => {
     setActiveConsultation(appt);
     setNewWeight("");
     setWeightError(null);
+    setDiagnosis("");
+    setTreatment("");
+    setAdditionalNotes("");
+    setCloseError(null);
     await fetchWeightHistory(appt.mascotaId);
   };
 
@@ -128,28 +139,46 @@ export const Consultations: React.FC = () => {
     }
   };
 
-  const handleCompleteConsultation = async () => {
+  const handleCompleteConsultation = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!activeConsultation) return;
 
+    if (!diagnosis || !treatment) {
+      setCloseError("Por favor, ingrese el Diagnóstico y Tratamiento clínico.");
+      return;
+    }
+
+    setCloseLoading(true);
+    setCloseError(null);
+
     try {
-      const response = await fetch(`http://localhost:5210/api/citas/${activeConsultation.id}/estado`, {
-        method: "PUT",
+      const response = await fetch("http://localhost:5210/api/consultas-detalles", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ id: activeConsultation.id, estado: "Completada" })
+        body: JSON.stringify({
+          citaId: activeConsultation.id,
+          mascotaId: activeConsultation.mascotaId,
+          veterinarioId: activeConsultation.veterinarioId,
+          diagnostico: diagnosis,
+          tratamiento: treatment,
+          notasAdicionales: additionalNotes
+        })
       });
 
       if (!response.ok) {
         const errResult = await response.json();
-        throw new Error(errResult.message || "Error al completar consulta.");
+        throw new Error(errResult.message || "Error al guardar el expediente.");
       }
 
       setActiveConsultation(null);
       await fetchDoctorAppointments();
     } catch (err: any) {
-      alert(err.message);
+      setCloseError(err.message || "Error de conexión.");
+    } finally {
+      setCloseLoading(false);
     }
   };
 
@@ -227,7 +256,7 @@ export const Consultations: React.FC = () => {
         {/* Lado derecho: Ficha médica de consulta activa */}
         <div className="active-chart-panel">
           {activeConsultation ? (
-            <div className="chart-wrapper">
+            <form onSubmit={handleCompleteConsultation} className="chart-wrapper">
               <div className="chart-header">
                 <Activity className="chart-icon" />
                 <div>
@@ -236,11 +265,60 @@ export const Consultations: React.FC = () => {
                 </div>
               </div>
 
+              {closeError && (
+                <div className="error-alert">
+                  <span>{closeError}</span>
+                </div>
+              )}
+
               <div className="chart-body">
                 <div className="clinical-notes-card">
                   <h3>Detalles del Motivo</h3>
                   <div className="notes-display">
                     {activeConsultation.motivo}
+                  </div>
+                </div>
+
+                {/* Formulario Clínico de Bitácora */}
+                <div className="clinical-inputs-card">
+                  <h3>Bitácora Médica de la Consulta</h3>
+                  
+                  <div className="form-group-field">
+                    <label>Diagnóstico Veterinario *</label>
+                    <textarea
+                      required
+                      rows={3}
+                      placeholder="Ingrese el diagnóstico clínico estructurado..."
+                      value={diagnosis}
+                      onChange={(e) => setDiagnosis(e.target.value)}
+                      disabled={closeLoading}
+                      className="form-input-text"
+                    />
+                  </div>
+
+                  <div className="form-group-field">
+                    <label>Tratamiento y Receta *</label>
+                    <textarea
+                      required
+                      rows={3}
+                      placeholder="Prescriba los medicamentos y recomendaciones..."
+                      value={treatment}
+                      onChange={(e) => setTreatment(e.target.value)}
+                      disabled={closeLoading}
+                      className="form-input-text"
+                    />
+                  </div>
+
+                  <div className="form-group-field">
+                    <label>Notas Adicionales (Opcional)</label>
+                    <textarea
+                      rows={2}
+                      placeholder="Indicaciones secundarias..."
+                      value={additionalNotes}
+                      onChange={(e) => setAdditionalNotes(e.target.value)}
+                      disabled={closeLoading}
+                      className="form-input-text"
+                    />
                   </div>
                 </div>
 
@@ -252,26 +330,30 @@ export const Consultations: React.FC = () => {
                   </div>
 
                   {/* Formulario rápido de peso */}
-                  <form onSubmit={handleAddWeightSubmit} className="mini-weight-form">
+                  <div className="mini-weight-form">
                     <div className="weight-input-row">
                       <div className="input-with-unit">
                         <input
                           type="number"
                           step="0.01"
-                          required
                           placeholder="Nuevo peso (ej: 9.8)"
                           value={newWeight}
                           onChange={(e) => setNewWeight(e.target.value)}
-                          disabled={submittingWeight}
+                          disabled={submittingWeight || closeLoading}
                         />
                         <span className="unit-tag">kg</span>
                       </div>
-                      <button type="submit" className="btn-save-weight" disabled={submittingWeight}>
-                        {submittingWeight ? "Guardando..." : "Registrar Pesaje"}
+                      <button 
+                        type="button" 
+                        onClick={handleAddWeightSubmit} 
+                        className="btn-save-weight" 
+                        disabled={submittingWeight || closeLoading || !newWeight}
+                      >
+                        {submittingWeight ? "..." : "Registrar"}
                       </button>
                     </div>
                     {weightError && <p className="error-text">{weightError}</p>}
-                  </form>
+                  </div>
 
                   {/* Historial de pesos */}
                   <div className="weights-history-list">
@@ -303,13 +385,14 @@ export const Consultations: React.FC = () => {
 
               <div className="chart-footer">
                 <button 
-                  onClick={handleCompleteConsultation}
+                  type="submit"
                   className="btn-complete-appt"
+                  disabled={closeLoading}
                 >
-                  <CheckSquare className="btn-small-icon" /> Finalizar Consulta Médica
+                  <CheckSquare className="btn-small-icon" /> {closeLoading ? "Cerrando Consulta..." : "Finalizar Consulta Médica"}
                 </button>
               </div>
-            </div>
+            </form>
           ) : (
             <div className="no-active-consultation">
               <Stethoscope className="big-stethoscope-icon" />
@@ -601,20 +684,29 @@ export const Consultations: React.FC = () => {
           margin: 0;
         }
 
+        .error-alert {
+          background: rgba(239, 68, 68, 0.15);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          color: #fca5a5;
+          padding: 12px;
+          border-radius: 8px;
+          font-size: 13px;
+        }
+
         .chart-body {
           display: flex;
           flex-direction: column;
           gap: 20px;
         }
 
-        .clinical-notes-card, .weight-record-card {
+        .clinical-notes-card, .clinical-inputs-card, .weight-record-card {
           background: rgba(15, 23, 42, 0.2);
           border: 1px solid rgba(255, 255, 255, 0.04);
           border-radius: 10px;
           padding: 20px;
         }
 
-        .clinical-notes-card h3, .card-sub-header h3 {
+        .clinical-notes-card h3, .clinical-inputs-card h3, .card-sub-header h3 {
           font-size: 14px;
           font-weight: 600;
           color: #ffffff;
@@ -629,6 +721,36 @@ export const Consultations: React.FC = () => {
           padding: 12px;
           border: 1px solid rgba(255, 255, 255, 0.04);
           line-height: 1.5;
+        }
+
+        .form-group-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          margin-bottom: 14px;
+        }
+
+        .form-group-field label {
+          font-size: 13px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+
+        .form-input-text {
+          background: rgba(15, 23, 42, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 8px;
+          padding: 10px 14px;
+          color: #ffffff;
+          font-size: 14px;
+          outline: none;
+          resize: none;
+          font-family: inherit;
+        }
+
+        .form-input-text:focus {
+          border-color: #06b6d4;
+          box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
         }
 
         .card-sub-header {
@@ -700,7 +822,7 @@ export const Consultations: React.FC = () => {
 
         .error-text {
           font-size: 12px;
-          color: #fca5a5;
+          color: #ef4444;
           margin-top: 6px;
         }
 

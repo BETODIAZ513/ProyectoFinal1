@@ -25,6 +25,7 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
     public DbSet<Mascota> Mascotas => Set<Mascota>();
     public DbSet<RegistroPeso> Pesos => Set<RegistroPeso>();
     public DbSet<Cita> Citas => Set<Cita>();
+    public DbSet<DetalleConsulta> DetallesConsultas => Set<DetalleConsulta>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,6 +100,34 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relación Cita -> Veterinario (1:N)
+            entity.HasOne<Veterinario>()
+                .WithMany()
+                .HasForeignKey(e => e.VeterinarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuración de DetalleConsulta
+        modelBuilder.Entity<DetalleConsulta>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Diagnostico).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Tratamiento).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.NotasAdicionales).HasMaxLength(1000);
+            entity.Property(e => e.FechaAtencion).IsRequired();
+
+            // Relación DetalleConsulta -> Cita (1:N)
+            entity.HasOne<Cita>()
+                .WithMany()
+                .HasForeignKey(e => e.CitaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación DetalleConsulta -> Mascota (1:N)
+            entity.HasOne<Mascota>()
+                .WithMany()
+                .HasForeignKey(e => e.MascotaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación DetalleConsulta -> Veterinario (1:N)
             entity.HasOne<Veterinario>()
                 .WithMany()
                 .HasForeignKey(e => e.VeterinarioId)
