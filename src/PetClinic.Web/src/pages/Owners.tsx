@@ -94,7 +94,7 @@ export const Owners: React.FC = () => {
       });
       if (!response.ok) throw new Error("Error al generar el código.");
       const data = await response.json();
-      setOtpCode(data.codigo);
+      setOtpCode(data.codigo || data.Codigo);
       setOtpTimer(150); // 150 segundos
     } catch (err) {
       alert("Error al generar el código.");
