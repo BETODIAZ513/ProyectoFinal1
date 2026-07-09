@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PetClinic.Infrastructure.Identity;
 using PetClinic.Infrastructure.Persistence;
 using System;
@@ -8,6 +9,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+
+[assembly: DoNotParallelize]
 
 namespace PetClinic.IntegrationTests;
 
