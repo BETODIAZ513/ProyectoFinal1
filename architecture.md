@@ -168,3 +168,9 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Creación de `FichaClinicaTests.cs` validando inserciones de registros de peso para mascotas activas, exclusiones para mascotas inactivas, validaciones de transiciones de tareas clínicas a estados no permitidos y restricciones de monitoreo para pacientes dados de alta.
   * Creación de `QueriesTests.cs` validando la proyección, ordenamiento y filtración del historial clínico longitudinal de pacientes y el filtrado por estados de hospitalización.
   * Creación de `DomainTests.cs` para validar la lógica pura del dominio, asegurando los constructores por defecto de `Mascota`, `Veterinario` y el estado inicial `"Pendiente"` de `TareaClinica`.
+
+* **Sprint 12: Integración de SQL Server Real en Docker Compose (Completado)**
+  * Adición del contenedor `petclinic-db` usando la imagen oficial de Microsoft SQL Server 2022.
+  * Configuración del volumen nominal `mssql_data` para persistencia de datos de las mascotas e historiales clínicos locales.
+  * Mapeo del puerto de conexión de base de datos `1433:1433` localmente para permitir el acceso mediante herramientas externas de administración de base de datos (SSMS, Azure Data Studio).
+  * Enlace del contenedor `petclinic-api` mediante variables de entorno para conectarse automáticamente y autogenerar el esquema físico en caliente en el arranque.
