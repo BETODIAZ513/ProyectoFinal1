@@ -15,5 +15,7 @@ public interface IPetClinicDbContext
     DbSet<DetalleConsulta> DetallesConsultas { get; }
     DbSet<TareaPredefinida> TareasPredefinidas { get; }
     DbSet<TareaClinica> TareasClinicas { get; }
+    DbSet<Hospitalizacion> Hospitalizaciones { get; }
+    DbSet<MonitoreoClinico> MonitoreosClinicos { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

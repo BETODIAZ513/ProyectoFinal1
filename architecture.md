@@ -140,3 +140,10 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Implementación de comandos CQRS para registrar tareas en estado "Pendiente" y transicionar sus estados en el flujo operativo (`Pendiente` -> `En Progreso` -> `Completada`).
   * Exposición de endpoints específicos en `/api/tareas-clinicas` y `/api/tareas-predefinidas` en `PetClinic.Api`.
   * Desarrollo en React de la vista `MedicalTasks` que renderiza un tablero Kanban interactivo para auxiliares clínicos, con un formulario modal de asignación que pre-rellena títulos e instrucciones clínicas a partir de las plantillas del catálogo.
+
+* **Sprint 8: Hospitalización y Monitoreo Clínico (Completado)**
+  * Definición de las entidades `Hospitalizacion` y `MonitoreoClinico` en `PetClinic.Domain` y sus relaciones relacionales en EF Core.
+  * Habilitación de la auditoría pasiva en ambas entidades para rastrear el usuario responsable de ingresos, tomas de constantes vitales y altas clínicas (`REQ-SEG-03`).
+  * Implementación de comandos CQRS para admisiones con validación de jaula única, altas médicas y registro periódico de signos vitales (temperatura rectal, frecuencias cardíaca y respiratoria, nivel de alerta).
+  * Exposición de endpoints bajo `/api/hospitalizaciones` y `/api/hospitalizaciones/{id}/monitoreos` en `PetClinic.Api`.
+  * Desarrollo en React de la vista `Hospitalization` para monitorizar jaulas, admitir pacientes, dar de alta y visualizar la telemetría cronológica de la evolución física de las mascotas.

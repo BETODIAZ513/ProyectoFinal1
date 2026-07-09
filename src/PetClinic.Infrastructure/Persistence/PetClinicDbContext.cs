@@ -28,6 +28,8 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
     public DbSet<DetalleConsulta> DetallesConsultas => Set<DetalleConsulta>();
     public DbSet<TareaPredefinida> TareasPredefinidas => Set<TareaPredefinida>();
     public DbSet<TareaClinica> TareasClinicas => Set<TareaClinica>();
+    public DbSet<Hospitalizacion> Hospitalizaciones => Set<Hospitalizacion>();
+    public DbSet<MonitoreoClinico> MonitoreosClinicos => Set<MonitoreoClinico>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -177,6 +179,40 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
                 .WithMany()
                 .HasForeignKey(e => e.CitaId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // Configuración de Hospitalizacion
+        modelBuilder.Entity<Hospitalizacion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Motivo).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Estado).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.NumeroJaula).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.FechaIngreso).IsRequired();
+
+            // Relación Hospitalizacion -> Mascota (1:N)
+            entity.HasOne<Mascota>()
+                .WithMany()
+                .HasForeignKey(e => e.MascotaId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuración de MonitoreoClinico
+        modelBuilder.Entity<MonitoreoClinico>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EstadoAlerta).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.MedicamentosAdministrados).HasMaxLength(500);
+            entity.Property(e => e.NotasMonitoreo).HasMaxLength(1000);
+            entity.Property(e => e.RegistradoPor).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Temperatura).HasColumnType("decimal(4, 2)").IsRequired();
+            entity.Property(e => e.FechaHora).IsRequired();
+
+            // Relación MonitoreoClinico -> Hospitalizacion (1:N)
+            entity.HasOne<Hospitalizacion>()
+                .WithMany()
+                .HasForeignKey(e => e.HospitalizacionId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Configuración dinámica de Shadow Properties de auditoría
