@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
   Search, Plus, Edit2, Trash2, X, AlertCircle, 
-  ChevronLeft, ChevronRight, ShieldAlert 
+  ChevronLeft, ChevronRight, ShieldAlert, Key, UserCheck 
 } from "lucide-react";
 
 interface Propietario {
@@ -12,6 +12,7 @@ interface Propietario {
   correoElectronico: string;
   direccion: string;
   activo: boolean;
+  firebaseUserId?: string;
 }
 
 interface PagedResponse {
@@ -28,6 +29,11 @@ export const Owners: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterTab, setFilterTab] = useState<"todos" | "pendientes">("todos");
+  
+  // OTP States
+  const [otpCode, setOtpCode] = useState<string | null>(null);
+  const [otpTimer, setOtpTimer] = useState<number>(0);
   
   // Estado para el modal de edición/creación
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +51,7 @@ export const Owners: React.FC = () => {
   const fetchOwners = async (page: number, search: string) => {
     setLoading(true);
     try {
-      const url = `http://localhost:5210/api/propietarios?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}`;
+      const url = `http://localhost:5210/api/propietarios?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}&onlyPending=${filterTab === "pendientes"}`;
       const response = await fetch(url, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -64,6 +70,52 @@ export const Owners: React.FC = () => {
   useEffect(() => {
     fetchOwners(currentPage, searchTerm);
   }, [currentPage, token]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchOwners(1, searchTerm);
+  }, [filterTab]);
+
+  useEffect(() => {
+    if (otpTimer <= 0) return;
+    const interval = setInterval(() => {
+      setOtpTimer(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [otpTimer]);
+
+  const handleGenerateCode = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5210/api/propietarios/${id}/generar-codigo`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error("Error al generar el código.");
+      const data = await response.json();
+      setOtpCode(data.codigo);
+      setOtpTimer(150); // 150 segundos
+    } catch (err) {
+      alert("Error al generar el código.");
+    }
+  };
+
+  const handleActivate = async (id: number) => {
+    if (!window.confirm("¿Desea verificar y activar este propietario?")) return;
+    try {
+      const response = await fetch(`http://localhost:5210/api/propietarios/${id}/activar`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error("Error al activar.");
+      fetchOwners(currentPage, searchTerm);
+    } catch (err) {
+      alert("Error al activar al propietario.");
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,6 +218,32 @@ export const Owners: React.FC = () => {
       </div>
 
       <div className="filter-bar">
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+          <button 
+            type="button"
+            onClick={() => setFilterTab("todos")} 
+            className={`btn-search ${filterTab === "todos" ? "active" : ""}`}
+            style={{ 
+              background: filterTab === "todos" ? "#06b6d4" : "#1e293b", 
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              color: '#ffffff'
+            }}
+          >
+            Todos los Clientes
+          </button>
+          <button 
+            type="button"
+            onClick={() => setFilterTab("pendientes")} 
+            className={`btn-search ${filterTab === "pendientes" ? "active" : ""}`}
+            style={{ 
+              background: filterTab === "pendientes" ? "#f97316" : "#1e293b", 
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              color: '#ffffff'
+            }}
+          >
+            Pendientes de Verificación
+          </button>
+        </div>
         <form onSubmit={handleSearchSubmit} className="search-form">
           <div className="search-wrapper">
             <Search className="search-icon" />
@@ -207,15 +285,21 @@ export const Owners: React.FC = () => {
                 </thead>
                 <tbody>
                   {data.items.map((owner) => (
-                    <tr key={owner.id} className={!owner.activo ? "inactive-row" : ""}>
+                    <tr key={owner.id} className={!owner.activo && !owner.firebaseUserId ? "inactive-row" : ""}>
                       <td className="font-semibold">{owner.nombreCompleto}</td>
                       <td>{owner.telefono}</td>
                       <td>{owner.correoElectronico}</td>
                       <td>{owner.direccion || <span className="text-muted">-</span>}</td>
                       <td>
-                        <span className={`badge-status ${owner.activo ? "active" : "inactive"}`}>
-                          {owner.activo ? "Activo" : "Inactivo"}
-                        </span>
+                        {!owner.activo && owner.firebaseUserId ? (
+                          <span className="badge-status pending" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316' }}>
+                            Por Verificar
+                          </span>
+                        ) : (
+                          <span className={`badge-status ${owner.activo ? "active" : "inactive"}`}>
+                            {owner.activo ? "Activo" : "Inactivo"}
+                          </span>
+                        )}
                       </td>
                       <td>
                         <div className="actions-cell">
@@ -227,12 +311,32 @@ export const Owners: React.FC = () => {
                             <Edit2 />
                           </button>
                           {owner.activo && (
+                            <>
+                              <button 
+                                onClick={() => handleGenerateCode(owner.id)} 
+                                className="btn-action-icon edit" 
+                                title="Generar Código de Acceso"
+                                style={{ color: '#06b6d4' }}
+                              >
+                                <Key />
+                              </button>
+                              <button 
+                                onClick={() => handleDeactivate(owner.id)} 
+                                className="btn-action-icon delete" 
+                                title="Desactivar lógicamente"
+                              >
+                                <Trash2 />
+                              </button>
+                            </>
+                          )}
+                          {!owner.activo && owner.firebaseUserId && (
                             <button 
-                              onClick={() => handleDeactivate(owner.id)} 
-                              className="btn-action-icon delete" 
-                              title="Desactivar lógicamente"
+                              onClick={() => handleActivate(owner.id)} 
+                              className="btn-action-icon edit" 
+                              title="Verificar y Activar Cuenta"
+                              style={{ color: '#10b981' }}
                             >
-                              <Trash2 />
+                              <UserCheck />
                             </button>
                           )}
                         </div>
@@ -242,6 +346,43 @@ export const Owners: React.FC = () => {
                 </tbody>
               </table>
             </div>
+
+            {otpCode && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center' }}>
+                  <div className="modal-header">
+                    <h2>Código de Acceso</h2>
+                    <button onClick={() => setOtpCode(null)} className="btn-close-modal">
+                      <X />
+                    </button>
+                  </div>
+                  <div style={{ padding: '20px 0' }}>
+                    <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '10px' }}>
+                      Entregue este código temporal al cliente para vincular su cuenta de Google.
+                    </p>
+                    {otpTimer > 0 ? (
+                      <>
+                        <div style={{ fontSize: '42px', fontWeight: 800, color: '#06b6d4', letterSpacing: '6px', margin: '20px 0', fontFamily: 'monospace' }}>
+                          {otpCode}
+                        </div>
+                        <div style={{ color: '#ef4444', fontSize: '14px', fontWeight: 600 }}>
+                          Vence en: {Math.floor(otpTimer / 60)}:{(otpTimer % 60).toString().padStart(2, '0')}
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ color: '#ef4444', fontSize: '16px', fontWeight: 700, margin: '20px 0' }}>
+                        CÓDIGO EXPIRADO
+                      </div>
+                    )}
+                  </div>
+                  <div className="modal-actions" style={{ justifyContent: 'center' }}>
+                    <button onClick={() => setOtpCode(null)} className="btn-cancel">
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Paginación */}
             {data.totalPages > 1 && (
