@@ -75,7 +75,7 @@ using (var scope = app.Services.CreateScope())
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        await DbInitializer.SeedDataAsync(userManager, roleManager);
+        await DbInitializer.SeedDataAsync(context, userManager, roleManager);
     }
     catch (Exception ex)
     {
