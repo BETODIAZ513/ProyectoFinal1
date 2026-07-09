@@ -223,8 +223,8 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
 
             var name = clrType.Name;
 
-            // REQ-SEG-03: Excluir TareasPredefinidas y RegistroPeso de la auditoría
-            if (name == "TareasPredefinidas" || name == "RegistroPeso")
+            // REQ-SEG-03: Excluir TareaPredefinida y RegistroPeso de la auditoría
+            if (name == "TareaPredefinida" || name == "RegistroPeso")
                 continue;
 
             // Aplicar shadow properties únicamente a entidades del dominio
@@ -260,7 +260,7 @@ public class PetClinicDbContext : IdentityDbContext<ApplicationUser>, IPetClinic
             var name = clrType.Name;
 
             // Validar exclusiones
-            if (name == "TareasPredefinidas" || name == "RegistroPeso")
+            if (name == "TareaPredefinida" || name == "RegistroPeso")
                 continue;
 
             // Solo auditar entidades que pertenezcan al dominio
