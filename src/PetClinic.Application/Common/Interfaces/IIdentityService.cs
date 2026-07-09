@@ -11,4 +11,6 @@ public interface IIdentityService
         string password, 
         string fullName, 
         IEnumerable<string> roles);
+
+    Task<bool> DeactivateUserAsync(string userId);
 }

@@ -102,7 +102,7 @@ public class VeterinarioTests : TestBase
         context.Veterinarios.Add(vet);
         await context.SaveChangesAsync();
 
-        var handler = new DeleteVeterinarianCommandHandler(context);
+        var handler = new DeleteVeterinarianCommandHandler(context, new TestIdentityService());
         var command = new DeleteVeterinarianCommand(10);
 
         // Act

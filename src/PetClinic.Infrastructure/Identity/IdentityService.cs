@@ -50,4 +50,13 @@ public class IdentityService : IIdentityService
 
         return (true, user.Id, string.Empty);
     }
+
+    public async Task<bool> DeactivateUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return false;
+        user.Activo = false;
+        var result = await _userManager.UpdateAsync(user);
+        return result.Succeeded;
+    }
 }

@@ -36,4 +36,9 @@ public class TestIdentityService : IIdentityService
     {
         return Task.FromResult((true, "Mock_User_Id_123", ""));
     }
+
+    public Task<bool> DeactivateUserAsync(string userId)
+    {
+        return Task.FromResult(true);
+    }
 }

@@ -114,10 +114,12 @@ public record DeleteVeterinarianCommand(int Id) : IRequest<bool>;
 public class DeleteVeterinarianCommandHandler : IRequestHandler<DeleteVeterinarianCommand, bool>
 {
     private readonly IPetClinicDbContext _context;
+    private readonly IIdentityService _identityService;
 
-    public DeleteVeterinarianCommandHandler(IPetClinicDbContext context)
+    public DeleteVeterinarianCommandHandler(IPetClinicDbContext context, IIdentityService identityService)
     {
         _context = context;
+        _identityService = identityService;
     }
 
     public async Task<bool> Handle(DeleteVeterinarianCommand request, CancellationToken cancellationToken)
@@ -128,9 +130,16 @@ public class DeleteVeterinarianCommandHandler : IRequestHandler<DeleteVeterinari
             return false;
         }
 
-        // Baja lógica
+        // Baja lógica del veterinario
         veterinario.Activo = false;
         await _context.SaveChangesAsync(cancellationToken);
+
+        // Desactivar cuenta de acceso asociada
+        if (!string.IsNullOrEmpty(veterinario.ApplicationUserId))
+        {
+            await _identityService.DeactivateUserAsync(veterinario.ApplicationUserId);
+        }
+
         return true;
     }
 }
