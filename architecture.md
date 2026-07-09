@@ -162,3 +162,9 @@ Cuando se ejecuta una acción en el sistema (por ejemplo, registrar una Mascota)
   * Validación del enrutamiento de consultas clínicas y transiciones de estado de visitas a `"Completada"`.
   * Validación de límites de peso corporal para mascotas y registros de peso (FluentValidation).
   * Validación de inyección automática de propiedades de sombra de auditoría (`CreatedBy`, `CreatedAt`) y exclusiones correspondientes (`TareaPredefinida` y `RegistroPeso`).
+
+* **Sprint 11: Expansión de Cobertura y Validación Funcional de Negocio (Completado)**
+  * Creación de `PropietarioTests.cs` validando creación, actualización, borrados lógicos y formatos de teléfono/email.
+  * Creación de `FichaClinicaTests.cs` validando inserciones de registros de peso para mascotas activas, exclusiones para mascotas inactivas, validaciones de transiciones de tareas clínicas a estados no permitidos y restricciones de monitoreo para pacientes dados de alta.
+  * Creación de `QueriesTests.cs` validando la proyección, ordenamiento y filtración del historial clínico longitudinal de pacientes y el filtrado por estados de hospitalización.
+  * Creación de `DomainTests.cs` para validar la lógica pura del dominio, asegurando los constructores por defecto de `Mascota`, `Veterinario` y el estado inicial `"Pendiente"` de `TareaClinica`.
