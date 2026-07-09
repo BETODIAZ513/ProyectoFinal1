@@ -14,9 +14,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Initialize Auth
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-// Force prompt to always select account
-googleProvider.setCustomParameters({
-  prompt: 'select_account'
-});
+// Request email scopes explicitly
+googleProvider.addScope("email");
+googleProvider.addScope("profile");
+export default app;
