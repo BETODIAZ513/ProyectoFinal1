@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { 
   LogOut, 
   Sun, 
@@ -15,19 +13,6 @@ import {
   CheckCircle,
   HelpCircle
 } from 'lucide-react';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDafrTo_f3jE1z-nGtFV-qxPaVuBEkv79k",
-  authDomain: "proyecto1-324fa.firebaseapp.com",
-  projectId: "proyecto1-324fa",
-  storageBucket: "proyecto1-324fa.firebasestorage.app",
-  messagingSenderId: "434318687930",
-  appId: "1:434318687930:web:c8a0634241861dee804c83",
-  measurementId: "G-8Y0M6ML921"
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
 
 const API_BASE = "http://localhost:5210/api";
 
@@ -236,24 +221,6 @@ export default function App() {
     }
   };
 
-  // Real Firebase Google Login
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setErrorMsg(null);
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-      
-      setToken(idToken);
-      localStorage.setItem('token', idToken);
-    } catch (err: any) {
-      setErrorMsg("Error al iniciar sesión con Google: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // OTP Link Action
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -397,8 +364,19 @@ export default function App() {
               Utilice su cuenta de Google registrada en la clínica para ingresar al portal.
             </p>
 
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label">Correo Electrónico de Google</label>
+              <input 
+                type="email"
+                className="form-input" 
+                value={googleEmail}
+                onChange={(e) => setGoogleEmail(e.target.value)}
+                placeholder="ej: juan.perez@test.com"
+              />
+            </div>
+
             <button 
-              onClick={handleGoogleLogin} 
+              onClick={handleGoogleLoginMock} 
               className="btn-primary" 
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#4285F4' }}
               disabled={loading}
@@ -409,39 +387,8 @@ export default function App() {
                 <path d="M3.95 10.72A5.4 5.4 0 0 1 3.6 9c0-.6.1-1.19.35-1.72V4.96H.95A9 9 0 0 0 .95 13.04l3-2.32z" fill="#FBBC05"/>
                 <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2A9 9 0 0 0 .95 4.96l3 2.32C4.66 5.16 6.65 3.58 9 3.58z" fill="#EA4335"/>
               </svg>
-              {loading ? 'Iniciando...' : 'Iniciar Sesión con Google'}
+              {loading ? 'Cargando...' : 'Iniciar Sesión con Google'}
             </button>
-
-            {/* Collapsible Local Mock Login */}
-            <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '20px', paddingTop: '16px' }}>
-              <details>
-                <summary style={{ cursor: 'pointer', fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'center', outline: 'none' }}>
-                  Simulador de Desarrollo (Sin Internet)
-                </summary>
-                <div style={{ marginTop: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: '12px' }}>
-                    <label className="form-label">Seleccionar Cuenta Simulada</label>
-                    <select 
-                      className="form-input" 
-                      value={googleEmail}
-                      onChange={(e) => setGoogleEmail(e.target.value)}
-                    >
-                      <option value="juan.perez@test.com">Juan Pérez (juan.perez@test.com)</option>
-                      <option value="maria.garcia@test.com">María García (maria.garcia@test.com)</option>
-                      <option value="nuevo.cliente@gmail.com">Nuevo Cliente Remoto (nuevo.cliente@gmail.com)</option>
-                    </select>
-                  </div>
-                  <button 
-                    onClick={handleGoogleLoginMock} 
-                    className="btn-primary" 
-                    style={{ background: '#475569', fontSize: '0.85rem', padding: '8px' }}
-                    disabled={loading}
-                  >
-                    Simular Login
-                  </button>
-                </div>
-              </details>
-            </div>
           </div>
         )}
 

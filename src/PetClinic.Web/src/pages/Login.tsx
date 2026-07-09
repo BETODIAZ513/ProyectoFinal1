@@ -46,14 +46,6 @@ export const Login: React.FC = () => {
     }
   };
 
-  // Función rápida para rellenar credenciales de prueba en desarrollo
-  const fillCredentials = (role: string) => {
-    setPassword("Admin123!");
-    if (role === "admin") setUsernameOrEmail("admin@petclinic.com");
-    if (role === "vet") setUsernameOrEmail("veterinario@petclinic.com");
-    if (role === "aux") setUsernameOrEmail("auxiliar@petclinic.com");
-    if (role === "rec") setUsernameOrEmail("recepcionista@petclinic.com");
-  };
 
   return (
     <div className="login-container">
@@ -115,23 +107,6 @@ export const Login: React.FC = () => {
           </button>
         </form>
 
-        <div className="test-accounts-section">
-          <h3>Acceso Rápido (Desarrollo)</h3>
-          <div className="test-buttons">
-            <button type="button" onClick={() => fillCredentials("admin")} className="btn-test">
-              Admin
-            </button>
-            <button type="button" onClick={() => fillCredentials("vet")} className="btn-test">
-              Veterinario
-            </button>
-            <button type="button" onClick={() => fillCredentials("aux")} className="btn-test">
-              Auxiliar
-            </button>
-            <button type="button" onClick={() => fillCredentials("rec")} className="btn-test">
-              Recepcionista
-            </button>
-          </div>
-        </div>
       </div>
 
       <style>{`

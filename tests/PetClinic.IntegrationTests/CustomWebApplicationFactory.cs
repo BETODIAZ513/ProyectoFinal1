@@ -9,7 +9,7 @@ namespace PetClinic.IntegrationTests;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     // Base de datos física de pruebas de integración
-    private const string TestConnectionString = "Data Source=127.0.0.1;Initial Catalog=PetClinicDb_IntegrationTests;User ID=sa;Password=ClinicaMascotas2026#;TrustServerCertificate=True";
+    private const string TestConnectionString = "Server=(localdb)\\mssqllocaldb;Database=PetClinicDb_IntegrationTests;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
     public CustomWebApplicationFactory()
     {
