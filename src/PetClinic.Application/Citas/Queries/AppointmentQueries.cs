@@ -137,3 +137,48 @@ public class GetAppointmentsByVeterinarianQueryHandler : IRequestHandler<GetAppo
         return await query.OrderBy(dto => dto.FechaHora).ToListAsync(cancellationToken);
     }
 }
+
+public record GetAppointmentsByVetIdQuery(int VeterinarioId) : IRequest<IEnumerable<CitaDto>>;
+
+public class GetAppointmentsByVetIdQueryHandler : IRequestHandler<GetAppointmentsByVetIdQuery, IEnumerable<CitaDto>>
+{
+    private readonly IPetClinicDbContext _context;
+
+    public GetAppointmentsByVetIdQueryHandler(IPetClinicDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IEnumerable<CitaDto>> Handle(GetAppointmentsByVetIdQuery request, CancellationToken cancellationToken)
+    {
+        var vet = await _context.Veterinarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == request.VeterinarioId, cancellationToken);
+
+        if (vet == null)
+        {
+            return new List<CitaDto>();
+        }
+
+        var today = DateTime.Today;
+
+        var query = from c in _context.Citas.AsNoTracking()
+                    join m in _context.Mascotas.AsNoTracking() on c.MascotaId equals m.Id
+                    join o in _context.Propietarios.AsNoTracking() on m.PropietarioId equals o.Id
+                    where c.VeterinarioId == vet.Id && c.FechaHora >= today
+                    select new CitaDto
+                    {
+                        Id = c.Id,
+                        MascotaId = c.MascotaId,
+                        MascotaNombre = m.Nombre,
+                        VeterinarioId = c.VeterinarioId,
+                        VeterinarioNombreCompleto = vet.NombreCompleto,
+                        PropietarioNombreCompleto = o.NombreCompleto,
+                        FechaHora = c.FechaHora,
+                        Motivo = c.Motivo,
+                        Estado = c.Estado
+                    };
+
+        return await query.OrderBy(dto => dto.FechaHora).ToListAsync(cancellationToken);
+    }
+}

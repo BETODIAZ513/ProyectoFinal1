@@ -56,9 +56,13 @@ export const Consultations: React.FC = () => {
       if (response.ok) {
         const result = await response.json();
         setAppointments(result);
+      } else {
+        const errResult = await response.json().catch(() => ({}));
+        throw new Error(errResult.message || `Error del servidor (${response.status}).`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert(err.message || "Error al sincronizar las consultas.");
     } finally {
       setLoading(false);
     }

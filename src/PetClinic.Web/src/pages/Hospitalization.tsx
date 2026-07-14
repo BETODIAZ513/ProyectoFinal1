@@ -91,9 +91,13 @@ export const Hospitalization: React.FC = () => {
             setVitalsHistory([]);
           }
         }
+      } else {
+        const errResult = await response.json().catch(() => ({}));
+        throw new Error(errResult.message || `Error del servidor (${response.status}).`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert(err.message || "Error al sincronizar el monitor de hospitalizados.");
     } finally {
       setLoading(false);
     }

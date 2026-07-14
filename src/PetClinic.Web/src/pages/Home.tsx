@@ -34,7 +34,7 @@ export const Home: React.FC = () => {
   // Auxiliar stats
   const [auxiliarStats, setAuxiliarStats] = useState({
     hospitalizadosCount: 0,
-    tareasUrgentes: 0,
+    tareasPendientesCount: 0,
     tareasPendientesList: [] as any[]
   });
 
@@ -98,7 +98,7 @@ export const Home: React.FC = () => {
           // 2. Tareas Clínicas
           const tasksRes = await fetch("http://localhost:5210/api/tareas-clinicas", { headers });
           const tasksData = tasksRes.ok ? await tasksRes.json() : [];
-          const pendingTasks = tasksData.filter((t: any) => !t.completado);
+          const pendingTasks = tasksData.filter((t: any) => t.estado !== "Completada");
 
           setVeterinarioStats({
             consultasHoyCount: todayCitas.length,
@@ -115,12 +115,11 @@ export const Home: React.FC = () => {
           // 2. Tareas
           const tasksRes = await fetch("http://localhost:5210/api/tareas-clinicas", { headers });
           const tasksData = tasksRes.ok ? await tasksRes.json() : [];
-          const pendingTasks = tasksData.filter((t: any) => !t.completado);
-          const urgentTasks = pendingTasks.filter((t: any) => t.prioridad === "Alta" || t.prioridad === "Urgente");
+          const pendingTasks = tasksData.filter((t: any) => t.estado !== "Completada");
 
           setAuxiliarStats({
             hospitalizadosCount: hospData.length,
-            tareasUrgentes: urgentTasks.length,
+            tareasPendientesCount: pendingTasks.length,
             tareasPendientesList: pendingTasks
           });
         }
@@ -298,7 +297,7 @@ export const Home: React.FC = () => {
         <ClipboardList className="metric-icon blue" />
         <div className="metric-info">
           <h3>Mis Tareas Asignadas</h3>
-          <p className="metric-value">{auxiliarStats.tareasUrgentes} Urgentes</p>
+          <p className="metric-value">{auxiliarStats.tareasPendientesCount} Pendientes</p>
         </div>
       </div>
 
@@ -309,15 +308,18 @@ export const Home: React.FC = () => {
             <p style={{ color: "#64748b", margin: 0 }}>No hay tareas clínicas pendientes.</p>
           ) : (
             auxiliarStats.tareasPendientesList.map((task: any) => (
-              <div key={task.id} className={`task-card-item priority-${task.prioridad === 'Alta' || task.prioridad === 'Urgente' ? 'high' : 'medium'}`}>
+              <div key={task.id} className="task-card-item">
                 <div className="task-details">
                   <div className="task-header-row">
-                    <span className={`task-badge ${task.prioridad === 'Alta' || task.prioridad === 'Urgente' ? 'priority' : 'normal'}`}>
-                      {task.prioridad.toUpperCase()}
+                    <span className="task-badge normal">
+                      {task.estado ? task.estado.toUpperCase() : "PENDIENTE"}
                     </span>
-                    <h4>{task.descripcion} - {task.mascotaNombre}</h4>
+                    <h4>{task.titulo} - {task.mascotaNombre}</h4>
                   </div>
-                  <p>Indicado por Dr. {task.veterinarioNombre}.</p>
+                  <p>{task.descripcion}</p>
+                  <p style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
+                    Indicado por Dr. {task.veterinarioNombre}.
+                  </p>
                 </div>
               </div>
             ))

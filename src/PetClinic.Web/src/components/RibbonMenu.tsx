@@ -3,13 +3,27 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { 
   Home, Users, Dog, Calendar, History, ClipboardList, 
-  Activity, LogOut, LayoutDashboard 
+  Activity, LogOut, LayoutDashboard, Sun, Moon 
 } from "lucide-react";
 
 export const RibbonMenu: React.FC = () => {
   const { user, logout, hasRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [isLight, setIsLight] = React.useState(() => localStorage.getItem("theme") === "light");
+
+  React.useEffect(() => {
+    if (isLight) {
+      document.body.classList.add("light");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.body.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    }
+  }, [isLight]);
+
+  const toggleTheme = () => setIsLight(!isLight);
 
   if (!user) return null;
 
@@ -58,15 +72,41 @@ export const RibbonMenu: React.FC = () => {
                 <History className="nav-icon" />
                 <span>Historial</span>
               </Link>
+              <Link to="/horarios" className={`ribbon-item ${isActive("/horarios") ? "active" : ""}`}>
+                <Calendar className="nav-icon" />
+                <span>Horarios</span>
+              </Link>
             </>
           )}
 
           {/* Menú de Recepcionista */}
           {hasRole("Recepcionista") && (
-            <Link to="/recepcion" className={`ribbon-item ${isActive("/recepcion") ? "active" : ""}`}>
-              <LayoutDashboard className="nav-icon" />
-              <span>Recepción</span>
-            </Link>
+            <>
+              <Link to="/recepcion" className={`ribbon-item ${isActive("/recepcion") ? "active" : ""}`}>
+                <LayoutDashboard className="nav-icon" />
+                <span>Recepción</span>
+              </Link>
+              <Link to="/propietarios" className={`ribbon-item ${isActive("/propietarios") ? "active" : ""}`}>
+                <Users className="nav-icon" />
+                <span>Propietarios</span>
+              </Link>
+              <Link to="/mascotas" className={`ribbon-item ${isActive("/mascotas") ? "active" : ""}`}>
+                <Dog className="nav-icon" />
+                <span>Mascotas</span>
+              </Link>
+              <Link to="/citas" className={`ribbon-item ${isActive("/citas") ? "active" : ""}`}>
+                <Calendar className="nav-icon" />
+                <span>Citas</span>
+              </Link>
+              <Link to="/historial" className={`ribbon-item ${isActive("/historial") ? "active" : ""}`}>
+                <History className="nav-icon" />
+                <span>Historial</span>
+              </Link>
+              <Link to="/horarios" className={`ribbon-item ${isActive("/horarios") ? "active" : ""}`}>
+                <Calendar className="nav-icon" />
+                <span>Horarios</span>
+              </Link>
+            </>
           )}
 
           {/* Menú de Veterinario */}
@@ -79,6 +119,22 @@ export const RibbonMenu: React.FC = () => {
               <Link to="/historial-clinico" className={`ribbon-item ${isActive("/historial-clinico") ? "active" : ""}`}>
                 <History className="nav-icon" />
                 <span>Historial Clínico</span>
+              </Link>
+              <Link to="/mascotas" className={`ribbon-item ${isActive("/mascotas") ? "active" : ""}`}>
+                <Dog className="nav-icon" />
+                <span>Mascotas</span>
+              </Link>
+              <Link to="/tareas-medicas" className={`ribbon-item ${isActive("/tareas-medicas") ? "active" : ""}`}>
+                <ClipboardList className="nav-icon" />
+                <span>Tareas Médicas</span>
+              </Link>
+              <Link to="/hospitalizacion" className={`ribbon-item ${isActive("/hospitalizacion") ? "active" : ""}`}>
+                <Activity className="nav-icon" />
+                <span>Hospitalización</span>
+              </Link>
+              <Link to="/horarios" className={`ribbon-item ${isActive("/horarios") ? "active" : ""}`}>
+                <Calendar className="nav-icon" />
+                <span>Horarios</span>
               </Link>
             </>
           )}
@@ -94,11 +150,27 @@ export const RibbonMenu: React.FC = () => {
                 <Activity className="nav-icon" />
                 <span>Hospitalización</span>
               </Link>
+              <Link to="/mascotas" className={`ribbon-item ${isActive("/mascotas") ? "active" : ""}`}>
+                <Dog className="nav-icon" />
+                <span>Mascotas</span>
+              </Link>
+              <Link to="/horarios" className={`ribbon-item ${isActive("/horarios") ? "active" : ""}`}>
+                <Calendar className="nav-icon" />
+                <span>Horarios</span>
+              </Link>
             </>
           )}
         </nav>
 
         <div className="ribbon-user-section">
+          <button 
+            onClick={toggleTheme} 
+            className="btn-logout" 
+            title={isLight ? "Modo Noche" : "Modo Día"} 
+            style={{ marginRight: "4px" }}
+          >
+            {isLight ? <Moon className="logout-icon" /> : <Sun className="logout-icon" />}
+          </button>
           <div className="user-profile-info">
             <span className="profile-name">{user.nombreCompleto}</span>
             <span className="profile-role">{user.roles[0]}</span>

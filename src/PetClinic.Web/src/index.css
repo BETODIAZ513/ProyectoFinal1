@@ -52,3 +52,443 @@ a:hover {
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
+
+/* Light mode overrides */
+body.light {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body.light .ribbon-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+body.light .brand-title {
+  color: #0f172a;
+}
+
+body.light .ribbon-item {
+  color: #475569;
+}
+
+body.light .ribbon-item:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+body.light .ribbon-item.active {
+  color: #0891b2;
+  background: rgba(6, 182, 212, 0.08);
+}
+
+body.light .btn-logout {
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+body.light .btn-logout:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+body.light .profile-name {
+  color: #0f172a;
+}
+
+body.light .profile-role {
+  color: #64748b;
+}
+
+/* Dashboard & Containers */
+body.light .dashboard-container,
+body.light .hosp-container,
+body.light .pets-container,
+body.light .owners-container,
+body.light .vets-container,
+body.light .appointments-container,
+body.light .reception-container,
+body.light .consultations-container,
+body.light .clinical-history-container,
+body.light .history-container,
+body.light .tasks-container {
+  color: #0f172a !important;
+}
+
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5,
+body.light h6 {
+  color: #0f172a !important;
+}
+
+body.light p,
+body.light span,
+body.light label {
+  color: #334155;
+}
+
+body.light .subtitle,
+body.light .role-text,
+body.light .section-desc,
+body.light .page-description {
+  color: #64748b !important;
+}
+
+body.light .metric-card,
+body.light .dashboard-panel,
+body.light .card-panel,
+body.light .pet-card,
+body.light .owner-card,
+body.light .vet-card,
+body.light .appointment-card,
+body.light .waiting-item,
+body.light .agenda-item,
+body.light .task-card-item,
+body.light .admissions-panel,
+body.light .detail-panel,
+body.light .panel,
+body.light .card,
+body.light .consultation-queue,
+body.light .consultation-form-panel {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light .metric-value {
+  color: #0f172a !important;
+}
+
+/* Tables */
+body.light table,
+body.light .clinical-table,
+body.light .vets-table,
+body.light .pets-table,
+body.light .owners-table,
+body.light .history-table {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body.light th {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+body.light td {
+  color: #0f172a !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Forms & Inputs */
+body.light input,
+body.light select,
+body.light textarea,
+body.light .search-input,
+body.light .form-control {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+body.light input:focus,
+body.light select:focus,
+body.light textarea:focus,
+body.light .search-input:focus {
+  border-color: #06b6d4 !important;
+  outline: none !important;
+}
+
+body.light .search-box {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light .search-box input {
+  background: transparent !important;
+  border: none !important;
+  color: #0f172a !important;
+}
+
+/* Modals */
+body.light .modal-content,
+body.light .modal-body,
+body.light .modal-header,
+body.light .modal-footer,
+body.light .dialog-content {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+body.light .modal-overlay {
+  background: rgba(15, 23, 42, 0.5) !important;
+}
+
+/* Items details / logs */
+body.light .waiting-item,
+body.light .agenda-item,
+body.light .task-card-item {
+  background: #ffffff !important;
+}
+
+body.light .waiting-details p,
+body.light .agenda-details p,
+body.light .task-details p {
+  color: #64748b !important;
+}
+
+body.light .detail-row span.label {
+  color: #64748b !important;
+}
+
+body.light .detail-row span.value {
+  color: #0f172a !important;
+}
+
+body.light .empty-state {
+  color: #64748b !important;
+}
+
+/* LIGHT MODE ENTIRE BACKOFFICE OVERRIDES */
+body.light {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* Page containers & side panels */
+body.light .search-panel,
+body.light .records-panel,
+body.light .appointments-panel,
+body.light .consultation-form-panel,
+body.light .demographics-weights-card > div,
+body.light .demographic-details,
+body.light .weights-details,
+body.light .consultations-history-card,
+body.light .shift-panel,
+body.light .schedule-panel,
+body.light .schedules-filters-panel,
+body.light .dashboard-panel,
+body.light .card-panel,
+body.light .admissions-panel,
+body.light .detail-panel,
+body.light .panel,
+body.light .card,
+body.light .consultation-queue,
+body.light .active-admissions-card,
+body.light .tasks-list-card,
+body.light .weights-list-card,
+body.light .info-panel,
+body.light .actions-panel,
+body.light .hosp-container,
+body.light .pets-container,
+body.light .owners-container,
+body.light .vets-container,
+body.light .appointments-container,
+body.light .reception-container,
+body.light .consultations-container,
+body.light .clinical-history-container,
+body.light .history-container,
+body.light .tasks-container,
+body.light .kanban-column,
+body.light .telemetry-panel,
+body.light .table-panel,
+body.light .active-chart-panel,
+body.light .clinical-notes-card,
+body.light .clinical-inputs-card,
+body.light .weight-record-card,
+body.light .notes-display,
+body.light .weights-history-list,
+body.light .hospitalization-layout > div {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+}
+
+/* Card components */
+body.light .pet-result-card,
+body.light .node-content,
+body.light .timeline-card,
+body.light .shift-card,
+body.light .metric-card,
+body.light .waiting-item,
+body.light .agenda-item,
+body.light .task-card-item,
+body.light .appt-card,
+body.light .pet-card,
+body.light .owner-card,
+body.light .vet-card,
+body.light .appointment-card,
+body.light .monitoreo-card,
+body.light .hosp-card,
+body.light .admission-card,
+body.light .task-card,
+body.light .task-kanban-card,
+body.light .summary-card {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05) !important;
+}
+
+body.light .pet-result-card:hover,
+body.light .appt-card:hover,
+body.light .timeline-card:hover,
+body.light .task-kanban-card:hover,
+body.light .summary-card:hover {
+  background: #f8fafc !important;
+  border-color: #06b6d4 !important;
+}
+
+body.light .pet-result-card.active,
+body.light .appt-card.active {
+  background: rgba(6, 182, 212, 0.08) !important;
+  border-color: #06b6d4 !important;
+}
+
+/* Text overrides - Titles & strong text */
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5,
+body.light h6,
+body.light .brand-title,
+body.light .profile-name,
+body.light .pet-name,
+body.light .pet-card-details h4,
+body.light .timeline-card h3,
+body.light .shift-details h3,
+body.light .shift-duties h4,
+body.light .metric-value,
+body.light .demographics-text h2,
+body.light .column-header h3,
+body.light .card-header h4,
+body.light .card-body h5,
+body.light .appointment-card-body h3,
+body.light .telemetry-header h2,
+body.light .vitals-timeline-wrapper h3,
+body.light .no-active-consultation h3,
+body.light .clinical-notes-card h3,
+body.light .clinical-inputs-card h3,
+body.light .card-sub-header h3,
+body.light .font-bold {
+  color: #0f172a !important;
+}
+
+/* Text overrides - Regular text */
+body.light li,
+body.light label,
+body.light .label,
+body.light .val,
+body.light .value,
+body.light .demo-row-item .val,
+body.light .demo-row-item .label,
+body.light .owner-span,
+body.light .reason-text,
+body.light .owner-name,
+body.light .task-time,
+body.light .shift-details p,
+body.light .shift-duties li,
+body.light .node-date,
+body.light .node-vet,
+body.light .field-title,
+body.light .notes-txt,
+body.light .no-pet-selected p,
+body.light .subtitle,
+body.light .page-description,
+body.light .profile-role,
+body.light .assigned-vet,
+body.light .date-span,
+body.light .time-span,
+body.light .telemetry-header p,
+body.light .form-group-field label,
+body.light .weights-table th,
+body.light .weights-table td,
+body.light .empty-state p {
+  color: #334155 !important;
+}
+
+/* Badges / pills adjustments */
+body.light .pill.breed {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+body.light .cage-badge {
+  background: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.light .status-tag.scheduled {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+body.light .timeline-node,
+body.light .vitals-timeline .timeline-node {
+  border-left-color: #cbd5e1 !important;
+}
+
+body.light .node-marker {
+  border-color: #ffffff !important;
+}
+
+body.light .task-count {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+body.light .empty-column-state {
+  border-color: #cbd5e1 !important;
+  color: #64748b !important;
+}
+
+body.light .card-header {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Input elements */
+body.light .form-input-text,
+body.light .input-with-unit input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Buttons & filter tabs */
+body.light .btn-refresh,
+body.light .btn-start,
+body.light .btn-cancel,
+body.light .btn-action,
+body.light .btn-transition,
+body.light .btn-vitals-quick,
+body.light .btn-save-weight {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.light .btn-search:not(.active) {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.light .btn-refresh:hover,
+body.light .btn-start:hover,
+body.light .btn-cancel:hover,
+body.light .btn-action:hover,
+body.light .btn-transition:hover,
+body.light .btn-vitals-quick:hover,
+body.light .btn-save-weight:hover,
+body.light .btn-search:not(.active):hover {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}

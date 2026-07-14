@@ -12,6 +12,7 @@ import { History } from "./pages/History";
 import { ClinicalHistory } from "./pages/ClinicalHistory";
 import { MedicalTasks } from "./pages/MedicalTasks";
 import { Hospitalization } from "./pages/Hospitalization";
+import { Schedules } from "./pages/Schedules";
 import { RibbonMenu } from "./components/RibbonMenu";
 import "./App.css";
 
@@ -39,6 +40,14 @@ const RootRedirector = () => {
   return isAuthenticated ? <Navigate to="/inicio" replace /> : <Navigate to="/login" replace />;
 };
 
+// Guardián para proteger rutas por rol
+const RoleRoute = ({ allowedRoles, children }: { allowedRoles: string[], children: React.ReactNode }) => {
+  const { isAuthenticated, hasRole } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const isAuthorized = allowedRoles.some(r => hasRole(r));
+  return isAuthorized ? <>{children}</> : <Navigate to="/inicio" replace />;
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -54,23 +63,18 @@ function App() {
             {/* Acceso para cualquier usuario autenticado */}
             <Route path="/inicio" element={<Home />} />
 
-            {/* Acceso restringido para Administrador */}
-            <Route path="/veterinarios" element={<Veterinarians />} />
-            <Route path="/propietarios" element={<Owners />} />
-            <Route path="/mascotas" element={<Pets />} />
-            <Route path="/citas" element={<Appointments />} />
-            <Route path="/historial" element={<History />} />
-
-            {/* Acceso restringido para Recepcionista */}
-            <Route path="/recepcion" element={<Reception />} />
-
-            {/* Acceso restringido para Veterinario */}
-            <Route path="/consultas" element={<Consultations />} />
-            <Route path="/historial-clinico" element={<ClinicalHistory />} />
-
-            {/* Acceso restringido para Auxiliar Clínico */}
-             <Route path="/tareas-medicas" element={<MedicalTasks />} />
-             <Route path="/hospitalizacion" element={<Hospitalization />} />
+            {/* Acceso restringido según rol */}
+            <Route path="/veterinarios" element={<RoleRoute allowedRoles={["Administrador"]}><Veterinarians /></RoleRoute>} />
+            <Route path="/propietarios" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista"]}><Owners /></RoleRoute>} />
+            <Route path="/mascotas" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista", "Veterinario", "AuxiliarClinico"]}><Pets /></RoleRoute>} />
+            <Route path="/citas" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista"]}><Appointments /></RoleRoute>} />
+            <Route path="/historial" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista"]}><History /></RoleRoute>} />
+            <Route path="/recepcion" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista"]}><Reception /></RoleRoute>} />
+            <Route path="/consultas" element={<RoleRoute allowedRoles={["Administrador", "Veterinario"]}><Consultations /></RoleRoute>} />
+            <Route path="/historial-clinico" element={<RoleRoute allowedRoles={["Administrador", "Veterinario", "AuxiliarClinico"]}><ClinicalHistory /></RoleRoute>} />
+            <Route path="/tareas-medicas" element={<RoleRoute allowedRoles={["Administrador", "Veterinario", "AuxiliarClinico"]}><MedicalTasks /></RoleRoute>} />
+            <Route path="/hospitalizacion" element={<RoleRoute allowedRoles={["Administrador", "Veterinario", "AuxiliarClinico"]}><Hospitalization /></RoleRoute>} />
+            <Route path="/horarios" element={<RoleRoute allowedRoles={["Administrador", "Recepcionista", "Veterinario", "AuxiliarClinico"]}><Schedules /></RoleRoute>} />
           </Route>
 
           {/* Redirección por defecto */}

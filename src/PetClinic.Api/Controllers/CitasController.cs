@@ -34,7 +34,7 @@ public class CitasController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrador,Recepcionista")] // Agendamiento restrictivo
+    [Authorize(Roles = "Administrador,Recepcionista,Veterinario")] // Agendamiento restrictivo
     public async Task<ActionResult<int>> Create([FromBody] CreateAppointmentCommand command)
     {
         try
@@ -80,9 +80,15 @@ public class CitasController : ControllerBase
     }
 
     [HttpGet("veterinario")]
-    [Authorize(Roles = "Administrador,Veterinario")] // Bandeja particular del médico logueado
-    public async Task<ActionResult<IEnumerable<CitaDto>>> GetByLoggedInVeterinarian()
+    [Authorize(Roles = "Administrador,Recepcionista,Veterinario,AuxiliarClinico")] // Bandeja particular o filtro por médico
+    public async Task<ActionResult<IEnumerable<CitaDto>>> GetByLoggedInVeterinarian([FromQuery] int? veterinarioId = null)
     {
+        if (veterinarioId.HasValue)
+        {
+            var resultByVet = await _mediator.Send(new GetAppointmentsByVetIdQuery(veterinarioId.Value));
+            return Ok(resultByVet);
+        }
+
         var userId = _currentUserService.UserId;
         if (string.IsNullOrEmpty(userId))
         {
