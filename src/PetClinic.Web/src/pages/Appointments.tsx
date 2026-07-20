@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -60,7 +61,7 @@ export const Appointments: React.FC = () => {
   const fetchAppointments = async (page: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/citas?page=${page}&pageSize=6`, {
+      const response = await fetch(`${API_BASE_URL}/api/citas?page=${page}&pageSize=6`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -78,11 +79,11 @@ export const Appointments: React.FC = () => {
   const fetchCatalogs = async () => {
     try {
       // Cargar Mascotas
-      const petRes = await fetch("http://localhost:5210/api/mascotas?pageSize=100", {
+      const petRes = await fetch(API_BASE_URL + "/api/mascotas?pageSize=100", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       // Cargar Veterinarios
-      const vetRes = await fetch("http://localhost:5210/api/veterinarios", {
+      const vetRes = await fetch(API_BASE_URL + "/api/veterinarios", {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -124,7 +125,7 @@ export const Appointments: React.FC = () => {
     setFormError(null);
 
     try {
-      const response = await fetch("http://localhost:5210/api/citas", {
+      const response = await fetch(API_BASE_URL + "/api/citas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +157,7 @@ export const Appointments: React.FC = () => {
     if (!window.confirm("¿Está seguro de que desea cancelar esta cita?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5210/api/citas/${id}/estado`, {
+      const response = await fetch(`${API_BASE_URL}/api/citas/${id}/estado`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

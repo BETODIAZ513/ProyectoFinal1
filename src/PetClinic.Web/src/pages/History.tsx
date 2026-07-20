@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
@@ -31,7 +32,7 @@ export const History: React.FC = () => {
   const fetchHistory = async (page: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/consultas-detalles/historial-citas?page=${page}&pageSize=8`, {
+      const response = await fetch(`${API_BASE_URL}/api/consultas-detalles/historial-citas?page=${page}&pageSize=8`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }

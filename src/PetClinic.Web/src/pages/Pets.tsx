@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -82,7 +83,7 @@ export const Pets: React.FC = () => {
   const fetchPets = async (page: number, search: string) => {
     setLoading(true);
     try {
-      const url = `http://localhost:5210/api/mascotas?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}`;
+      const url = `${API_BASE_URL}/api/mascotas?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}`;
       const response = await fetch(url, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -101,7 +102,7 @@ export const Pets: React.FC = () => {
   const fetchOwners = async () => {
     try {
       // Obtenemos una lista simple de propietarios para el desplegable (máximo 100 por simplicidad)
-      const response = await fetch("http://localhost:5210/api/propietarios?pageSize=100", {
+      const response = await fetch(API_BASE_URL + "/api/propietarios?pageSize=100", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -168,8 +169,8 @@ export const Pets: React.FC = () => {
 
     const isEdit = !!selectedPet;
     const url = isEdit 
-      ? `http://localhost:5210/api/mascotas/${selectedPet.id}`
-      : "http://localhost:5210/api/mascotas";
+      ? `${API_BASE_URL}/api/mascotas/${selectedPet.id}`
+      : API_BASE_URL + "/api/mascotas";
     const method = isEdit ? "PUT" : "POST";
 
     const payload = isEdit 
@@ -206,7 +207,7 @@ export const Pets: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -232,7 +233,7 @@ export const Pets: React.FC = () => {
   const fetchWeightHistory = async (petId: number) => {
     setWeightHistoryLoading(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas/${petId}/pesos`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas/${petId}/pesos`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -262,7 +263,7 @@ export const Pets: React.FC = () => {
     setWeightError(null);
 
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas/${chartPet.id}/pesos`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas/${chartPet.id}/pesos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

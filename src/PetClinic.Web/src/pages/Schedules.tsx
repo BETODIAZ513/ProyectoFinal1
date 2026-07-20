@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Calendar, Clock, User, Plus, CheckCircle, RefreshCw, AlertCircle, Sparkles } from "lucide-react";
@@ -64,7 +65,7 @@ export const Schedules: React.FC = () => {
     const fetchInitialData = async () => {
       try {
         // 1. Veterinarios
-        const vetsRes = await fetch("http://localhost:5210/api/veterinarios", { headers });
+        const vetsRes = await fetch(API_BASE_URL + "/api/veterinarios", { headers });
         if (vetsRes.ok) {
           const vets = await vetsRes.json();
           setVetsList(vets);
@@ -75,7 +76,7 @@ export const Schedules: React.FC = () => {
         }
 
         // 2. Mascotas (para agendamiento)
-        const petsRes = await fetch("http://localhost:5210/api/mascotas?page=1&pageSize=100", { headers });
+        const petsRes = await fetch(API_BASE_URL + "/api/mascotas?page=1&pageSize=100", { headers });
         if (petsRes.ok) {
           const pagedPets = await petsRes.json();
           setPetsList(pagedPets.items || []);
@@ -95,11 +96,11 @@ export const Schedules: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      let url = "http://localhost:5210/api/citas/veterinario";
+      let url = API_BASE_URL + "/api/citas/veterinario";
       
       // Si se selecciona un veterinario en el selector (Auxiliar, Admin, Recepcionista)
       if (selectedVetId && !hasRole("Veterinario")) {
-        url = `http://localhost:5210/api/citas/veterinario?veterinarioId=${selectedVetId}`;
+        url = `${API_BASE_URL}/api/citas/veterinario?veterinarioId=${selectedVetId}`;
       }
 
       const res = await fetch(url, { headers });
@@ -143,7 +144,7 @@ export const Schedules: React.FC = () => {
     const proposedDateTime = `${formFecha}T${formHora}:00`;
 
     try {
-      const res = await fetch("http://localhost:5210/api/citas", {
+      const res = await fetch(API_BASE_URL + "/api/citas", {
         method: "POST",
         headers,
         body: JSON.stringify({

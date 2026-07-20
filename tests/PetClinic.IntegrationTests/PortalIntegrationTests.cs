@@ -20,7 +20,11 @@ public class PortalIntegrationTests : IntegrationTestBase
     public async Task GetMyPets_WhenAuthenticatedAsPropietario_ReturnsOnlyTheirPets()
     {
         // Arrange
-        await AuthenticateAsync("juan.perez@test.com", "Admin123!");
+        var owner = await DbContext.Propietarios.FirstAsync();
+        var ownerPets = await DbContext.Mascotas.Where(m => m.PropietarioId == owner.Id).ToListAsync();
+        Assert.IsTrue(ownerPets.Count > 0);
+
+        await AuthenticateAsync(owner.CorreoElectronico, "Admin123!");
 
         // Act
         var response = await Client.GetAsync("api/portal/pets");
@@ -30,23 +34,25 @@ public class PortalIntegrationTests : IntegrationTestBase
 
         var pets = await response.Content.ReadFromJsonAsync<List<MascotaDto>>();
         Assert.IsNotNull(pets);
-        Assert.IsTrue(pets.Count > 0);
-        // Todos los animales listados deben pertenecer a Juan Pérez
-        Assert.IsTrue(pets.All(p => p.PropietarioNombreCompleto == "Juan Perez"));
+        Assert.AreEqual(ownerPets.Count, pets.Count);
+        // Todos los animales listados deben pertenecer al propietario
+        Assert.IsTrue(pets.All(p => p.PropietarioNombreCompleto == owner.NombreCompleto));
     }
 
     [TestMethod]
     public async Task GetPetHistory_WhenAuthenticatedAsPropietario_ExcludesInternalNotes()
     {
         // Arrange
-        await AuthenticateAsync("juan.perez@test.com", "Admin123!");
+        var detail = await DbContext.DetallesConsultas.FirstAsync();
+        var pet = await DbContext.Mascotas.FindAsync(detail.MascotaId);
+        Assert.IsNotNull(pet);
+        var owner = await DbContext.Propietarios.FindAsync(pet.PropietarioId);
+        Assert.IsNotNull(owner);
 
-        // Obtener el ID de la mascota de Juan Pérez ("Toby")
-        var toby = await DbContext.Mascotas.FirstOrDefaultAsync(m => m.Nombre == "Toby");
-        Assert.IsNotNull(toby);
+        await AuthenticateAsync(owner.CorreoElectronico, "Admin123!");
 
         // Act
-        var response = await Client.GetAsync($"api/portal/pets/{toby.Id}/history");
+        var response = await Client.GetAsync($"api/portal/pets/{pet.Id}/history");
 
         // Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -67,14 +73,14 @@ public class PortalIntegrationTests : IntegrationTestBase
     public async Task GetPetHistory_ForPetOfAnotherOwner_ReturnsNotFound()
     {
         // Arrange
-        await AuthenticateAsync("juan.perez@test.com", "Admin123!");
+        var owner1 = await DbContext.Propietarios.FirstAsync();
+        var owner2 = await DbContext.Propietarios.FirstAsync(p => p.Id != owner1.Id);
+        var petOfOwner2 = await DbContext.Mascotas.FirstAsync(m => m.PropietarioId == owner2.Id);
 
-        // Obtener el ID de la mascota de Maria Garcia ("Luna")
-        var luna = await DbContext.Mascotas.FirstOrDefaultAsync(m => m.Nombre == "Luna");
-        Assert.IsNotNull(luna);
+        await AuthenticateAsync(owner1.CorreoElectronico, "Admin123!");
 
         // Act
-        var response = await Client.GetAsync($"api/portal/pets/{luna.Id}/history");
+        var response = await Client.GetAsync($"api/portal/pets/{petOfOwner2.Id}/history");
 
         // Assert
         Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);

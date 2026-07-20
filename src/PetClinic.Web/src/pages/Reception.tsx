@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -24,7 +25,7 @@ export const Reception: React.FC = () => {
   const fetchTodayAppointments = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5210/api/citas/hoy", {
+      const response = await fetch(API_BASE_URL + "/api/citas/hoy", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -46,7 +47,7 @@ export const Reception: React.FC = () => {
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`http://localhost:5210/api/citas/${id}/estado`, {
+      const response = await fetch(`${API_BASE_URL}/api/citas/${id}/estado`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

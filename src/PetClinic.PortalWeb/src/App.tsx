@@ -16,7 +16,7 @@ import {
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 
-const API_BASE = "http://localhost:5210/api";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:5210") + "/api";
 
 // Interfaces
 interface MascotaDto {

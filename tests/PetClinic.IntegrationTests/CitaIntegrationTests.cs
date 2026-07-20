@@ -25,7 +25,7 @@ public class CitaIntegrationTests : IntegrationTestBase
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<PagedListDto<CitaDto>>();
         Assert.IsNotNull(result);
-        Assert.AreEqual(10, result.TotalCount); // 10 appointments seeded
+        Assert.AreEqual(40, result.TotalCount); // 40 appointments seeded
         Assert.AreEqual(5, result.Items.Count);
     }
 

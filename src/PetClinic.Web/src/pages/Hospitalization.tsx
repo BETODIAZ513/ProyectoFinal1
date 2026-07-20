@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -74,7 +75,7 @@ export const Hospitalization: React.FC = () => {
   const fetchActiveAdmissions = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5210/api/hospitalizaciones", {
+      const response = await fetch(API_BASE_URL + "/api/hospitalizaciones", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -106,7 +107,7 @@ export const Hospitalization: React.FC = () => {
   const fetchVitalsHistory = async (hospId: number) => {
     setLoadingVitals(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/hospitalizaciones/${hospId}/monitoreos`, {
+      const response = await fetch(`${API_BASE_URL}/api/hospitalizaciones/${hospId}/monitoreos`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -122,7 +123,7 @@ export const Hospitalization: React.FC = () => {
 
   const fetchPetsCatalog = async () => {
     try {
-      const response = await fetch("http://localhost:5210/api/mascotas?pageSize=100", {
+      const response = await fetch(API_BASE_URL + "/api/mascotas?pageSize=100", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -169,7 +170,7 @@ export const Hospitalization: React.FC = () => {
     setAdmitError(null);
 
     try {
-      const response = await fetch("http://localhost:5210/api/hospitalizaciones", {
+      const response = await fetch(API_BASE_URL + "/api/hospitalizaciones", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +202,7 @@ export const Hospitalization: React.FC = () => {
     if (!window.confirm("¿Está seguro de firmar el alta clínica para esta mascota? Esto liberará su jaula.")) return;
 
     try {
-      const response = await fetch(`http://localhost:5210/api/hospitalizaciones/${hospId}/alta`, {
+      const response = await fetch(`${API_BASE_URL}/api/hospitalizaciones/${hospId}/alta`, {
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -253,7 +254,7 @@ export const Hospitalization: React.FC = () => {
     setVitalsError(null);
 
     try {
-      const response = await fetch("http://localhost:5210/api/hospitalizaciones/monitoreos", {
+      const response = await fetch(API_BASE_URL + "/api/hospitalizaciones/monitoreos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

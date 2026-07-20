@@ -31,6 +31,8 @@ services:
     build:
       context: ./src/PetClinic.Web
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5210}
     ports:
       - "5173:80"
     depends_on:
@@ -41,6 +43,8 @@ services:
     build:
       context: ./src/PetClinic.PortalWeb
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5210}
     ports:
       - "5211:80"
     depends_on:

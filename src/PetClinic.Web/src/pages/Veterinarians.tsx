@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -38,7 +39,7 @@ export const Veterinarians: React.FC = () => {
   const fetchVets = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5210/api/veterinarios", {
+      const response = await fetch(API_BASE_URL + "/api/veterinarios", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -102,8 +103,8 @@ export const Veterinarians: React.FC = () => {
     setFormError(null);
 
     const url = isEdit 
-      ? `http://localhost:5210/api/veterinarios/${selectedVet.id}`
-      : "http://localhost:5210/api/veterinarios";
+      ? `${API_BASE_URL}/api/veterinarios/${selectedVet.id}`
+      : API_BASE_URL + "/api/veterinarios";
     const method = isEdit ? "PUT" : "POST";
 
     const payload = isEdit 
@@ -140,7 +141,7 @@ export const Veterinarians: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5210/api/veterinarios/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/veterinarios/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`

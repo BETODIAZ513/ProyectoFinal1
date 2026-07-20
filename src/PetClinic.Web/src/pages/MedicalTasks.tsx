@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -56,7 +57,7 @@ export const MedicalTasks: React.FC = () => {
   const fetchTasks = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5210/api/tareas-clinicas", {
+      const response = await fetch(API_BASE_URL + "/api/tareas-clinicas", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -72,10 +73,10 @@ export const MedicalTasks: React.FC = () => {
 
   const fetchCatalogs = async () => {
     try {
-      const predRes = await fetch("http://localhost:5210/api/tareas-predefinidas", {
+      const predRes = await fetch(API_BASE_URL + "/api/tareas-predefinidas", {
         headers: { "Authorization": `Bearer ${token}` }
       });
-      const petsRes = await fetch("http://localhost:5210/api/mascotas?pageSize=100", {
+      const petsRes = await fetch(API_BASE_URL + "/api/mascotas?pageSize=100", {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -134,7 +135,7 @@ export const MedicalTasks: React.FC = () => {
     setFormError(null);
 
     try {
-      const response = await fetch("http://localhost:5210/api/tareas-clinicas", {
+      const response = await fetch(API_BASE_URL + "/api/tareas-clinicas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -165,7 +166,7 @@ export const MedicalTasks: React.FC = () => {
 
   const handleTransition = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`http://localhost:5210/api/tareas-clinicas/${id}/estado`, {
+      const response = await fetch(`${API_BASE_URL}/api/tareas-clinicas/${id}/estado`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

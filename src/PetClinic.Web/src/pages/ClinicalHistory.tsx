@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -55,7 +56,7 @@ export const ClinicalHistory: React.FC = () => {
   const searchPets = async (term: string) => {
     setLoadingPets(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas?pageSize=6&searchTerm=${encodeURIComponent(term)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas?pageSize=6&searchTerm=${encodeURIComponent(term)}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -78,11 +79,11 @@ export const ClinicalHistory: React.FC = () => {
     setLoadingHistory(true);
     try {
       // 1. Obtener detalles de consulta
-      const historyRes = await fetch(`http://localhost:5210/api/consultas-detalles/mascota/${pet.id}`, {
+      const historyRes = await fetch(`${API_BASE_URL}/api/consultas-detalles/mascota/${pet.id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       // 2. Obtener pesos
-      const weightRes = await fetch(`http://localhost:5210/api/mascotas/${pet.id}/pesos`, {
+      const weightRes = await fetch(`${API_BASE_URL}/api/mascotas/${pet.id}/pesos`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
 

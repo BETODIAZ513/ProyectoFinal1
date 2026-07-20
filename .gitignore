@@ -34,5 +34,7 @@ dist-ssr/
 .env
 .env.*
 
-# OpenSpec changes (except main specs/configs)
-# Keep openspec/specs/ and openspec/config.yaml, but ignore temporary logs if any
+# Test results
+TestResults/
+[Tt]est[Rr]esults/
+

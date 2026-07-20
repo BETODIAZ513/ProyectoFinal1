@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -48,7 +49,7 @@ export const Consultations: React.FC = () => {
   const fetchDoctorAppointments = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5210/api/citas/veterinario", {
+      const response = await fetch(API_BASE_URL + "/api/citas/veterinario", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -75,7 +76,7 @@ export const Consultations: React.FC = () => {
   const fetchWeightHistory = async (petId: number) => {
     setWeightLoading(true);
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas/${petId}/pesos`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas/${petId}/pesos`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -116,7 +117,7 @@ export const Consultations: React.FC = () => {
     setWeightError(null);
 
     try {
-      const response = await fetch(`http://localhost:5210/api/mascotas/${activeConsultation.mascotaId}/pesos`, {
+      const response = await fetch(`${API_BASE_URL}/api/mascotas/${activeConsultation.mascotaId}/pesos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +157,7 @@ export const Consultations: React.FC = () => {
     setCloseError(null);
 
     try {
-      const response = await fetch("http://localhost:5210/api/consultas-detalles", {
+      const response = await fetch(API_BASE_URL + "/api/consultas-detalles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

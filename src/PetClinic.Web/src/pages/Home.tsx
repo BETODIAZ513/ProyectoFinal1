@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -48,19 +49,19 @@ export const Home: React.FC = () => {
 
         if (hasRole("Administrador")) {
           // 1. Propietarios
-          const ownersRes = await fetch("http://localhost:5210/api/propietarios?page=1&pageSize=1", { headers });
+          const ownersRes = await fetch(API_BASE_URL + "/api/propietarios?page=1&pageSize=1", { headers });
           const ownersData = ownersRes.ok ? await ownersRes.json() : { totalCount: 0 };
 
           // 2. Mascotas
-          const petsRes = await fetch("http://localhost:5210/api/mascotas?page=1&pageSize=1", { headers });
+          const petsRes = await fetch(API_BASE_URL + "/api/mascotas?page=1&pageSize=1", { headers });
           const petsData = petsRes.ok ? await petsRes.json() : { totalCount: 0 };
 
           // 3. Citas de hoy
-          const citasRes = await fetch("http://localhost:5210/api/citas/hoy", { headers });
+          const citasRes = await fetch(API_BASE_URL + "/api/citas/hoy", { headers });
           const citasData = citasRes.ok ? await citasRes.json() : [];
 
           // 4. Hospitalizaciones
-          const hospRes = await fetch("http://localhost:5210/api/hospitalizaciones", { headers });
+          const hospRes = await fetch(API_BASE_URL + "/api/hospitalizaciones", { headers });
           const hospData = hospRes.ok ? await hospRes.json() : [];
 
           setAdminStats({
@@ -73,7 +74,7 @@ export const Home: React.FC = () => {
         }
 
         if (hasRole("Recepcionista")) {
-          const citasRes = await fetch("http://localhost:5210/api/citas/hoy", { headers });
+          const citasRes = await fetch(API_BASE_URL + "/api/citas/hoy", { headers });
           const citasData = citasRes.ok ? await citasRes.json() : [];
           
           const waiting = citasData.filter((c: any) => c.estado === "Agendada");
@@ -88,7 +89,7 @@ export const Home: React.FC = () => {
 
         if (hasRole("Veterinario")) {
           // 1. Citas del veterinario
-          const citasRes = await fetch("http://localhost:5210/api/citas/veterinario", { headers });
+          const citasRes = await fetch(API_BASE_URL + "/api/citas/veterinario", { headers });
           const citasData = citasRes.ok ? await citasRes.json() : [];
           
           const todayStr = new Date().toISOString().split('T')[0];
@@ -96,7 +97,7 @@ export const Home: React.FC = () => {
           const pendingCitas = todayCitas.filter((c: any) => c.estado === "Agendada");
 
           // 2. Tareas Clínicas
-          const tasksRes = await fetch("http://localhost:5210/api/tareas-clinicas", { headers });
+          const tasksRes = await fetch(API_BASE_URL + "/api/tareas-clinicas", { headers });
           const tasksData = tasksRes.ok ? await tasksRes.json() : [];
           const pendingTasks = tasksData.filter((t: any) => t.estado !== "Completada");
 
@@ -109,11 +110,11 @@ export const Home: React.FC = () => {
 
         if (hasRole("AuxiliarClinico")) {
           // 1. Hospitalizaciones
-          const hospRes = await fetch("http://localhost:5210/api/hospitalizaciones", { headers });
+          const hospRes = await fetch(API_BASE_URL + "/api/hospitalizaciones", { headers });
           const hospData = hospRes.ok ? await hospRes.json() : [];
 
           // 2. Tareas
-          const tasksRes = await fetch("http://localhost:5210/api/tareas-clinicas", { headers });
+          const tasksRes = await fetch(API_BASE_URL + "/api/tareas-clinicas", { headers });
           const tasksData = tasksRes.ok ? await tasksRes.json() : [];
           const pendingTasks = tasksData.filter((t: any) => t.estado !== "Completada");
 

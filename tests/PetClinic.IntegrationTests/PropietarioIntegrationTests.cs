@@ -47,7 +47,7 @@ public class PropietarioIntegrationTests : IntegrationTestBase
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<PagedListDto<Propietario>>();
         Assert.IsNotNull(result);
-        Assert.AreEqual(10, result.TotalCount); // 10 owners seeded
+        Assert.AreEqual(40, result.TotalCount); // 40 owners seeded
         Assert.AreEqual(5, result.Items.Count); // Page size is 5
     }
 

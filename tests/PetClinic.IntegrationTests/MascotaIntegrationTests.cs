@@ -25,7 +25,7 @@ public class MascotaIntegrationTests : IntegrationTestBase
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<PagedListDto<MascotaDto>>();
         Assert.IsNotNull(result);
-        Assert.AreEqual(15, result.TotalCount); // 15 pets seeded in DbInitializer
+        Assert.AreEqual(60, result.TotalCount); // 60 pets seeded in DbInitializer
         Assert.AreEqual(5, result.Items.Count);
     }
 

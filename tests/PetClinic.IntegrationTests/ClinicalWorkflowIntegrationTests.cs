@@ -22,7 +22,7 @@ public class ClinicalWorkflowIntegrationTests : IntegrationTestBase
         {
             MascotaId = pet.Id,
             Motivo = "Sospecha de intoxicación",
-            NumeroJaula = "Jaula 10"
+            NumeroJaula = "Jaula 99"
         };
 
         // Act - Admit

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { 
@@ -51,7 +52,7 @@ export const Owners: React.FC = () => {
   const fetchOwners = async (page: number, search: string) => {
     setLoading(true);
     try {
-      const url = `http://localhost:5210/api/propietarios?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}&onlyPending=${filterTab === "pendientes"}`;
+      const url = `${API_BASE_URL}/api/propietarios?page=${page}&pageSize=6&searchTerm=${encodeURIComponent(search)}&onlyPending=${filterTab === "pendientes"}`;
       const response = await fetch(url, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -86,7 +87,7 @@ export const Owners: React.FC = () => {
 
   const handleGenerateCode = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:5210/api/propietarios/${id}/generar-codigo`, {
+      const response = await fetch(`${API_BASE_URL}/api/propietarios/${id}/generar-codigo`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -104,7 +105,7 @@ export const Owners: React.FC = () => {
   const handleActivate = async (id: number) => {
     if (!window.confirm("¿Desea verificar y activar este propietario?")) return;
     try {
-      const response = await fetch(`http://localhost:5210/api/propietarios/${id}/activar`, {
+      const response = await fetch(`${API_BASE_URL}/api/propietarios/${id}/activar`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -154,8 +155,8 @@ export const Owners: React.FC = () => {
 
     const isEdit = !!selectedOwner;
     const url = isEdit 
-      ? `http://localhost:5210/api/propietarios/${selectedOwner.id}`
-      : "http://localhost:5210/api/propietarios";
+      ? `${API_BASE_URL}/api/propietarios/${selectedOwner.id}`
+      : API_BASE_URL + "/api/propietarios";
     const method = isEdit ? "PUT" : "POST";
 
     const payload = isEdit 
@@ -192,7 +193,7 @@ export const Owners: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5210/api/propietarios/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/propietarios/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`

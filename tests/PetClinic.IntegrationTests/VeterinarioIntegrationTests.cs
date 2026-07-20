@@ -24,7 +24,7 @@ public class VeterinarioIntegrationTests : IntegrationTestBase
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         var list = await response.Content.ReadFromJsonAsync<List<Veterinario>>();
         Assert.IsNotNull(list);
-        Assert.AreEqual(4, list.Count); // 4 vets seeded in DbInitializer
+        Assert.AreEqual(8, list.Count); // 8 vets seeded in DbInitializer
     }
 
     [TestMethod]
