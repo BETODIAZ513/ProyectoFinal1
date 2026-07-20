@@ -176,8 +176,10 @@ Una vez que tenemos la URL pública de la API (`$API_URL`), compilamos las imág
 ### 1. Back Office (`petclinic-web`)
 
 ```bash
-# Compilar la imagen inyectando VITE_API_URL
-az acr build --registry $ACR_NAME --image petclinic-web:latest --build-arg VITE_API_URL=$API_URL -f src/PetClinic.Web/Dockerfile .
+# Compilar la imagen desde la carpeta src/PetClinic.Web inyectando VITE_API_URL
+cd src/PetClinic.Web
+az acr build --registry $ACR_NAME --image petclinic-web:latest --build-arg VITE_API_URL=$API_URL .
+cd ~/ProyectoFinal1
 
 # Desplegar la Container App del Backoffice
 az containerapp create \
@@ -195,8 +197,10 @@ az containerapp create \
 ### 2. Portal del Cliente (`petclinic-portalweb`)
 
 ```bash
-# Compilar la imagen inyectando VITE_API_URL
-az acr build --registry $ACR_NAME --image petclinic-portalweb:latest --build-arg VITE_API_URL=$API_URL -f src/PetClinic.PortalWeb/Dockerfile .
+# Compilar la imagen desde la carpeta src/PetClinic.PortalWeb inyectando VITE_API_URL
+cd src/PetClinic.PortalWeb
+az acr build --registry $ACR_NAME --image petclinic-portalweb:latest --build-arg VITE_API_URL=$API_URL .
+cd ~/ProyectoFinal1
 
 # Desplegar la Container App del Portal de Clientes
 az containerapp create \
